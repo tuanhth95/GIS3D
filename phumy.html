@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>ArcGIS JavaScript: Châu Đức Boundary (Manual)</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.26/"></script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/geometry/Polygon",
+      "esri/geometry/Polyline", // Import Polyline
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol", // Import SimpleLineSymbol
+      "esri/layers/GraphicsLayer",
+      "esri/Graphic"
+    ], function(Map, MapView, Polygon, Polyline, SimpleFillSymbol, SimpleLineSymbol, GraphicsLayer, Graphic) {
+      var map = new Map({
+        basemap: "topo-vector"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [107.202,10.583],
+        zoom: 10
+      });
+
+      view.popup.autoOpenEnabled = false;
+
+
+      const polygonCoordinates = [
+      /**/
+      [107.013956, 10.643582],
+[107.027554, 10.648710],
+[107.028802, 10.650703],
+[107.055003, 10.658135],
+[107.066416, 10.653571],
+[107.096386, 10.651924],
+[107.101351, 10.663269],
+[107.121222, 10.673094],
+[107.125346, 10.682534],
+[107.133822, 10.685072],
+[107.134166, 10.694796],
+[107.137403, 10.707558],
+[107.139724, 10.709623],
+[107.159823, 10.710424],
+[107.162950, 10.714836],
+[107.164486, 10.715945],
+[107.165516, 10.715870],
+[107.163435, 10.709685],
+[107.166466, 10.707196],
+[107.165238, 10.684287],
+[107.159822, 10.680361],
+[107.160404, 10.675074],
+[107.166702, 10.666523],
+[107.164420, 10.640206],
+[107.162392, 10.637732],
+[107.167285, 10.619193],
+[107.164909, 10.619689],
+[107.160066, 10.611529],
+[107.162548, 10.609904],
+[107.162474, 10.607309],
+[107.160586, 10.606081],
+[107.163335, 10.605777],
+[107.167909, 10.599224],
+[107.171762, 10.559611],
+[107.168361, 10.559630],
+[107.171014, 10.535149],
+[107.157091, 10.532290],
+[107.148005, 10.535842],
+[107.131619, 10.510218],
+[107.124195, 10.510156],
+[107.122628, 10.478029],
+[107.102056, 10.474818],
+[107.068929, 10.484162],
+[107.033129, 10.465208],
+[107.001912, 10.501702],
+[107.028643, 10.536949],
+[107.029307, 10.544507],
+[107.023509, 10.549901],
+[107.013491, 10.552095],
+[107.028162, 10.582468],
+[107.024095, 10.596102],
+[107.016073, 10.610462],
+[106.997990, 10.627014],
+[107.005983, 10.635686],
+[107.013675, 10.629592],
+[107.018439, 10.629632],
+[107.019671, 10.633565],
+      /**/
+      ];
+
+      const polygon = new Polygon({
+        rings: [polygonCoordinates]
+      });
+
+      const fillSymbol = new SimpleFillSymbol({
+        color: [0, 222, 255, 0.4],
+        outline: {
+          color: [0, 0, 0],
+          width: 1
+        }
+      });
+
+      const polygonGraphic = new Graphic({
+        geometry: polygon,
+        symbol: fillSymbol
+      });
+
+      const graphicsLayer = new GraphicsLayer({
+        graphics: [polygonGraphic]
+      });
+
+      map.add(graphicsLayer);
+
+      var markerLayer = new GraphicsLayer();
+      map.add(markerLayer);
+
+      var pointsOfInterest = [
+        {
+          name: "Xã Sông Xoài",
+          location: [10.658654, 107.154090],
+          area: 29.19,
+          population: 5983 
+        },
+        {
+          name: "Xã Châu Pha",
+          location: [10.572015, 107.154533],
+          area: 32.53,
+          population: 10916	
+        },
+        {
+          name: "Xã Tân Hòa",
+          location: [10.534642, 107.107353],
+          area: 33.78,
+          population: 9237
+        },
+        {
+          name: "Xã Tóc Tiên",
+          location: [10.601026, 107.113238],
+          area: 30.64,
+          population: 2862
+        },
+        {
+          name: "Xã Tân Hải",
+          location: [10.499582, 107.107107],
+          area: 22.42,
+          population: 10091
+        },
+        {
+          name: "Phường Tân Phước",
+          location: [10.565614, 107.074365],
+          area: 29.75,
+          population: 15182
+        },
+        {
+          name: "Phường Phước Hòa",
+          location: [10.516929, 107.048375],
+          area: 54.68,
+          population: 16126
+        },
+        {
+          name: "Phường Hắc Dịch",
+          location: [10.645401, 107.112623],
+          area: 32.00,
+          population: 16565
+        },
+        {
+          name: "Phường Mỹ Xuân",
+          location: [10.627877, 107.041962],
+          area: 38.93,
+          population: 32345 
+        },
+        {
+          name: "Phường Phú Mỹ",
+          location: [10.588808, 107.048288],
+          area: 31.87,
+          population: 29738
+        }
+      ]
+
+      pointsOfInterest.forEach(function(point) {
+        var marker = new Graphic({
+          geometry: {
+            type: "point",
+            longitude: point.location[0],
+            latitude: point.location[1]
+          },
+          symbol: {
+            type: "picture-marker",
+            url:"./wards.jpg",
+            width: "24px",
+            height: "24px"
+          },
+          popupTemplate: {
+            title: `${point.name}`,
+            content: `Diện tích: ${point.area} km<sup>2</sup><br>Dân số: ${point.population}`
+          }
+        });
+        markerLayer.add(marker);
+      });
+
+      var schools = [
+  {
+    name: "Trường Mầm Non Tư Thục Vườn Hồng Xuân Ngọc",
+    location: [10.6170863,107.0731853]
+  },
+  {
+    name: "Trường Mầm Non Tuổi Ngọc",
+    location: [10.5220185,107.0814494]
+  },
+  // ...
+
+  {
+    name: "Trường tiểu học Nguyễn Công Trứ",
+    location: [10.644697,107.0746949]
+  },
+  {
+    name: "Trường Tiểu học Quang Trung",
+    location: [10.5863294,107.0237951]
+  },
+  {
+    name: "Trường Tiểu học Nguyễn Thị Đinh",
+    location: [10.560712,107.046903]
+  },
+  {
+    name: "Trường Tiểu học Lý Thường Kiệt CS2",
+    location: [10.5455244,107.0565928]
+  },
+  {
+    name: "Trường tiểu học Trưng Vương",
+    location: [10.5323134,107.0671968]
+  },
+  // ...
+
+  {
+    name: "Trường THCS Phan Bội Châu",
+    location: [10.6268619,107.043634]
+  },
+  {
+    name: "Trường THCS Phan Chu Trinh",
+    location: [10.6268619,107.043634]
+  },
+  {
+    name: "Trường THCS Võ Văn Kiệt",
+    location: [10.606017,107.0474733]
+  },
+  {
+    name: "Trường Thcs Phú Mỹ",
+    location: [10.5896636,107.0503986]
+  },
+  {
+    name: "Trường THCS Tân Phước",
+    location: [10.5731296,107.0527753]
+  },
+  // ...
+
+  {
+    name: "Trường THPT Hắc Dịch",
+    location: [10.6357058,107.0827753]
+  },
+  // ...
+];
+schools.forEach(function(point) {
+        var marker = new Graphic({
+          geometry: {
+            type: "point",
+            longitude: point.location[0],
+            latitude: point.location[1]
+          },
+          symbol: {
+            type: "picture-marker",
+            url:"./school.png",
+            width: "24px",
+            height: "24px"
+          },
+          popupTemplate: {
+            title: `${point.name}`,
+          }
+        });
+        markerLayer.add(marker);
+      });
+
+      view.on("click", function(event) {
+        view.hitTest(event).then(function(response) {
+          if (response.results.length) {
+            var graphic = response.results.filter(function(result) {
+              return result.graphic.layer === markerLayer;
+            })[0].graphic;
+
+            view.popup.open({
+              title: graphic.popupTemplate.title,
+              content: graphic.popupTemplate.content
+            });
+
+            view.popup.location = event.mapPoint;
+          }
+        });
+      });
+
+
+      const highwayCoordinates = [
+      [10.488296, 107.174167],
+[10.481662, 107.197061],
+[10.481758, 107.197250],
+[10.481567, 107.197701],
+[10.481410, 107.197827],
+[10.478931, 107.206018],
+[10.477746, 107.211804],
+[10.476683, 107.219774],
+[10.476668, 107.220315],
+[10.476899, 107.221066],
+[10.477130, 107.221497],
+[10.477523, 107.221865],
+[10.478986, 107.223095],
+[10.486787, 107.229980],
+[10.487461, 107.233650],
+[10.487478, 107.235405],
+[10.487468, 107.236065],
+[10.486194, 107.249278],
+[10.487086, 107.254654],
+[10.487686, 107.262250],
+[10.488232, 107.265179],
+[10.489857, 107.269471],
+[10.489756, 107.269656],
+[10.489856, 107.269790],
+[10.489975, 107.269607],
+[10.495550, 107.281536],
+[10.500438, 107.293706],
+[10.501887, 107.329801],
+[10.502287, 107.332431],
+[10.503248, 107.335065],
+[10.509896, 107.344472],
+[10.515800, 107.348257],
+[10.515969, 107.348460],
+[10.521664, 107.360386],
+[10.522890, 107.364158],
+[10.521090, 107.370266],
+[10.521109, 107.372014],
+[10.521370, 107.373134],
+[10.532742, 107.391692],
+[10.533054, 107.392574],
+[10.535068, 107.399162],
+[10.534953, 107.399284],
+[10.535046, 107.399415],
+[10.535149, 107.399472],
+[10.539733, 107.413931],
+[10.539554, 107.414095],
+[10.539656, 107.414379],
+[10.539864, 107.414482],
+[10.548292, 107.434752],
+[10.548574, 107.436106],
+[10.549155, 107.442814],
+[10.551879, 107.449144],
+[10.553123, 107.456216],
+[10.553160, 107.456763],
+[10.552975, 107.458476],
+[10.551422, 107.463094],
+[10.551395, 107.463440],
+[10.552528, 107.467403],
+[10.552540, 107.468349],
+[10.550353, 107.472755],
+[10.550390, 107.473546],
+[10.551389, 107.476241],
+[10.552566, 107.486796],
+[10.552210, 107.494017],
+[10.551854, 107.496480],
+[10.550263, 107.501527],
+[10.547865, 107.504207],
+[10.545467, 107.509327],
+[10.545681, 107.510921],
+[10.548899, 107.514519],
+[10.551870, 107.519828],
+[10.552501, 107.521910],
+[10.559208, 107.531016],
+[10.559106, 107.534226],
+[10.558180, 107.536010],
+[10.558194, 107.536922],
+[10.560598, 107.542385],
+[10.566119, 107.545174],
+[10.567608, 107.547067],
+[10.570972, 107.549423],
+[10.572020, 107.549914],
+[10.576238, 107.550419],
+[10.577327, 107.550896],
+[10.578752, 107.552300],
+[10.580763, 107.553504],
+[10.582886, 107.556031],
+[10.582942, 107.560645],
+[10.580969, 107.564173],
+[10.580086, 107.567970],
+[10.580863, 107.570318],
+[10.580992, 107.573145],
+[10.581510, 107.574008],
+[10.585703, 107.576764],
+[10.587597, 107.577166],
+[10.587816, 107.577529],
+[10.587981, 107.579508]
+];
+
+      const polyline = new Polyline({
+  paths: [highwayCoordinates]
+});
+
+const lineSymbol = new SimpleLineSymbol({
+  color: [255, 0, 0], 
+  width: 3 
+});
+
+const highwayGraphic = new Graphic({
+  geometry: polyline,
+  symbol: lineSymbol
+});
+
+const highwayLayer = new GraphicsLayer({
+  graphics: [highwayGraphic]
+});
+
+map.add(highwayLayer);
+
+
+    });
+  </script>
+</body>
+
+</html>
