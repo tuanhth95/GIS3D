@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>ArcGIS JavaScript: Côn Đảo Boundary (Manual)</title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.26/"></script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/geometry/Polygon",
+            "esri/geometry/Polyline",
+            "esri/symbols/SimpleFillSymbol",
+            "esri/symbols/SimpleLineSymbol",
+            "esri/layers/GraphicsLayer",
+            "esri/Graphic"
+        ], function (Map, MapView, Polygon, Polyline, SimpleFillSymbol, SimpleLineSymbol, GraphicsLayer, Graphic) {
+            var map = new Map({
+                basemap: "topo-vector"
+            });
+
+            var view = new MapView({
+                container: "viewDiv",
+                map: map,
+                center: [106.61144609176058, 8.700929042320933],
+                zoom: 11
+            });
+
+            view.popup.autoOpenEnabled = false;
+
+            const graphicsLayer = new GraphicsLayer({
+                graphics: [polygonGraphic]
+            });
+
+            map.add(graphicsLayer);
+
+            var markerLayer = new GraphicsLayer();
+            map.add(markerLayer);
+
+            var pointsOfInterest = [
+                {
+                    name: "Hòn Bà",
+                    location: [ 107.089278, 10.324],
+                },
+                {
+                    name: "Hòn Cau",
+                    location: [106.73968212191606, 8.691207794209767],
+                },
+                {
+                    name: "Hòn Tre lớn",
+                    location: [106.5392562422884, 8.70812318525408],
+                },
+                {
+                    name: "Hòn Tre Nhỏ",
+                    location: [106.58676654038379, 8.736220571984218],
+                },
+                {
+                    name: "Côn Đảo",
+                    location: [106.61144609176058, 8.700929042320933],
+                    area: 76,
+                    population: 15760,
+                },
+            ]
+
+            pointsOfInterest.forEach(function (point) {
+                var marker = new Graphic({
+                    geometry: {
+                        type: "point",
+                        longitude: point.location[0],
+                        latitude: point.location[1]
+                    },
+                    symbol: {
+                        type: "picture-marker",
+                        url: "./wards.jpg",
+                        width: "24px",
+                        height: "24px"
+                    },
+                    popupTemplate: {
+                        title: `${point.name}`,
+                        content: `Diện tích: ${point.area} km<sup>2</sup><br>Dân số: ${point.population}`
+                    }
+                });
+                markerLayer.add(marker);
+            });
+
+            var schools = [
+            {
+                    name: "Trường Mầm non Tuổi Thơ",
+                    location: [106.60993941600925, 8.689200335451867]
+                },
+                {
+                    name: "Trường Mầm non Sen Hồng",
+                    location: [106.61229411610012, 8.687398836470448]
+                },
+                {
+                    name: "Trường Mầm non Hướng Dương",
+                    location: [106.60725090787304, 8.685410042852402]
+                },
+
+                {
+                    name: "Trường Tiểu học Cao Văn Ngọc",
+                    location: [106.60685394693817, 8.686141349341137]
+
+                },
+                {
+                    name: "Trường THCS Lê Hồng Phong",
+                    location: [106.61259066181277, 8.68848722769459]
+
+                },
+                {
+                    name: "Trường THPT Võ Thị Sáu",
+                    location: [106.60568377850667, 8.686172651178074]
+
+                },
+            ];
+            schools.forEach(function (point) {
+                var marker = new Graphic({
+                    geometry: {
+                        type: "point",
+                        longitude: point.location[0],
+                        latitude: point.location[1]
+                    },
+                    symbol: {
+                        type: "picture-marker",
+                        url: "./school.png",
+                        width: "24px",
+                        height: "24px"
+                    },
+                    popupTemplate: {
+                        title: `${point.name}`,
+                    }
+                });
+                markerLayer.add(marker);
+            });
+
+            view.on("click", function (event) {
+                view.hitTest(event).then(function (response) {
+                    if (response.results.length) {
+                        var graphic = response.results.filter(function (result) {
+                            return result.graphic.layer === markerLayer;
+                        })[0].graphic;
+
+                        view.popup.open({
+                            title: graphic.popupTemplate.title,
+                            content: graphic.popupTemplate.content
+                        });
+
+                        view.popup.location = event.mapPoint;
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>
