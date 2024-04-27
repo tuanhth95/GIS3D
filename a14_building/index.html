@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Sketch in 3D | Sample | ArcGIS Maps SDK for JavaScript 4.29</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.29/"></script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            background-color: ghostwhite;
+        }
+    </style>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/SceneView",
+            "esri/views/3d/environment/SunLighting",
+            "esri/widgets/Sketch/SketchViewModel",
+            "esri/widgets/Sketch",
+            "esri/geometry/Extent",
+            "esri/layers/support/ImageElement",
+            "esri/layers/support/ExtentAndRotationGeoreference",
+            "esri/layers/MediaLayer",
+            "esri/layers/GraphicsLayer",
+            "esri/layers/ElevationLayer",
+            "esri/symbols/PolygonSymbol3D",
+            "esri/symbols/ExtrudeSymbol3DLayer",
+            "esri/symbols/edges/SolidEdges3D",
+            "esri/symbols/LineSymbol3D",
+            "esri/symbols/PathSymbol3DLayer",
+            "esri/symbols/PointSymbol3D",
+            "esri/symbols/ObjectSymbol3DLayer",
+            "esri/geometry/Polygon",
+            "esri/geometry/Polyline",
+            "esri/geometry/Point",
+            "esri/Graphic"
+        ], (
+            Map,
+            SceneView,
+            SunLighting,
+            SketchViewModel,
+            Sketch,
+            Extent,
+            ImageElement,
+            ExtentAndRotationGeoreference,
+            MediaLayer,
+            GraphicsLayer,
+            ElevationLayer,
+            PolygonSymbol3D,
+            ExtrudeSymbol3DLayer,
+            SolidEdges3D,
+            LineSymbol3D,
+            PathSymbol3DLayer,
+            PointSymbol3D,
+            ObjectSymbol3DLayer,
+            Polygon,
+            Polyline,
+            Point,
+            Graphic
+        ) => {
+
+            /**********************************************
+             * Graphics layer to sketch on
+             *********************************************/
+                // The layer where the graphics are sketched
+            const sketchLayer = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+
+            const map = new Map({
+                basemap: "topo-vector",
+                ground: "world-elevation",
+                layers: [sketchLayer] //end layers
+            });
+
+            const view = new SceneView({
+                container: "viewDiv",
+                map: map,
+                camera: {
+                    position: [106.80796261025952,10.879517007857416,   100],
+                    heading: 0,
+                    tilt: 40
+                }
+            });
+            /**********************************************
+             * Symbologies
+             *********************************************/
+            // Polygon symbol used for sketching the extruded building footprints
+            function generateBuildingRings(z) {
+                return [[
+                    [106.80776,10.880314152985868,z],
+                    [106.8075409,10.879978318744286, z],
+                    [106.80763184869983,10.879917, z],
+                    [106.8078065,10.8801855, z],
+                    [106.807984,10.880075, z],
+                    [106.8080484,10.880161, z],
+                    [106.807795,10.88032, z]
+                ]];
+            }
+            function generateBancolRings(z) {
+                return [
+                    [
+                        [106.8075422, 10.8799795, z],
+                        [106.8075559, 10.8799999, z],
+                        [106.8075506, 10.8800035, z],
+                        [106.8075516, 10.8800108, z],
+                        [106.80756 ,10.8800223, z],
+                        [106.8075653, 10.880023, z],
+                        [106.8075693, 10.8800203,z],
+                        [106.8075777, 10.8800335,z],
+                        [106.8075727, 10.8800361,z],
+                        [106.807572 ,10.8800407, z],
+                        [106.8075824, 10.8800565,z],
+                        [106.8075864, 10.8800572,z],
+                        [106.8075911, 10.8800546,z],
+                        [106.8076374, 10.8801234,z],
+                        [106.807632 ,10.8801263, z],
+                        [106.807632 ,10.8801333, z],
+                        [106.8076414, 10.8801474,z],
+                        [106.8076478, 10.8801477,z],
+                        [106.8076512, 10.8801454,z],
+                        [106.8076609, 10.8801596,z],
+                        [106.8076562, 10.8801622,z],
+                        [106.8076548, 10.8801675,z],
+                        [106.8076646, 10.880183, z],
+                        [106.8076693, 10.8801833,z],
+                        [106.8076746, 10.8801807,z],
+                        [106.8077098, 10.880234, z],
+                        [106.8077028, 10.8802376,z],
+                        [106.8077018, 10.8802422,z],
+                        [106.8077125, 10.880258, z],
+                        [106.8077172, 10.880258, z],
+                        [106.8077236, 10.8802541,z],
+                        [106.8077634, 10.8803143,z],
+                        [106.8077919, 10.8803169,z],
+                        [106.8078248, 10.8802962,z],
+                        [106.8078315, 10.8803054,z],
+                        [106.8078429, 10.8803047,z],
+                        [106.8078636, 10.8802916,z],
+                        [106.8078663, 10.8802843,z],
+                        [106.807861 ,10.8802744, z],
+                        [106.8079113, 10.8802435,z],
+                        [106.807918 ,10.8802534, z],
+                        [106.807928 ,10.8802527, z],
+                        [106.8079515, 10.8802376,z],
+                        [106.8079542, 10.8802313,z],
+                        [106.8079488, 10.8802224,z],
+                        [106.8079644, 10.8802124,z],
+                        [106.8079705, 10.8802222,z],
+                        [106.8079782, 10.8802236,z],
+                        [106.8079983, 10.880211, z],
+                        [106.8079986, 10.8802058,z],
+                        [106.8079922, 10.8801956,z],
+                        [106.8080429, 10.880164, z],
+                        [106.8079829, 10.880078, z],
+                        [106.8079353, 10.880107, z],
+                        [106.8079309, 10.8801001,z],
+                        [106.8079249, 10.8801004,z],
+                        [106.8079091, 10.8801096,z],
+                        [106.8079091, 10.8801152,z],
+                        [106.8079135, 10.8801212,z],
+                        [106.8078987, 10.8801304,z],
+                        [106.807895 ,10.8801245, z],
+                        [106.8078893, 10.8801241,z],
+                        [106.8078699, 10.8801353,z],
+                        [106.8078702, 10.8801396,z],
+                        [106.8078742, 10.8801452,z],
+                        [106.8078429, 10.8801648,z],
+                        [106.807839 ,10.8801584, z],
+                        [106.8078323, 10.880159, z],
+                        [106.8078177, 10.8801667,z],
+                        [106.807817 ,10.8801719, z],
+                        [106.80782 ,10.8801772, z],
+                        [106.8078063, 10.8801871,z],
+                        [106.8077684, 10.8801268,z],
+                        [106.8077734, 10.8801239,z],
+                        [106.8077744, 10.8801183,z],
+                        [106.8077664, 10.8801067,z],
+                        [106.8077624, 10.8801071,z],
+                        [106.8077567, 10.8801107,z],
+                        [106.8077506, 10.8801001,z],
+                        [106.8077557, 10.8800969,z],
+                        [106.807757 ,10.8800932, z],
+                        [106.807748 ,10.8800784, z],
+                        [106.8077439, 10.8800781,z],
+                        [106.8077382, 10.8800817,z],
+                        [106.8076809, 10.8799948,z],
+                        [106.8076859, 10.8799912,z],
+                        [106.8076863, 10.8799866,z],
+                        [106.8076782, 10.8799744,z],
+                        [106.8076742, 10.879974, z],
+                        [106.8076688, 10.8799763,z],
+                        [106.8076608, 10.8799622,z],
+                        [106.8076655, 10.8799592,z],
+                        [106.8076662, 10.8799533,z],
+                        [106.8076568, 10.8799391,z],
+                        [106.8076517, 10.8799391,z],
+                        [106.8076464, 10.8799418,z],
+                        [106.8076323, 10.879921, z],
+                        [106.8075422, 10.8799795,z],
+                    ]
+                ]
+            }
+
+            function generateWindowRings(z) {
+                return [
+                    [
+                        [106.8075449, 10.8799844,z],
+                        [ 106.8075422, 10.8799795,z],
+                        [ 106.8076323, 10.879921, z],
+                        [ 106.8076372, 10.8799284,z],
+                        [ 106.8076408, 10.8799264,z],
+                        [ 106.8076469, 10.8799363,z],
+                        [ 106.8076436, 10.8799386,z],
+                        [ 106.8076888, 10.8800065,z],
+                        [ 106.8076922, 10.8800041,z],
+                        [ 106.807712 ,10.8800344, z],
+                        [ 106.8077083, 10.8800364,z],
+                        [ 106.8077123, 10.8800443,z],
+                        [ 106.8077163, 10.8800417,z],
+                        [ 106.8077347, 10.88007, z],
+                        [ 106.8077311, 10.8800723,z],
+                        [ 106.807772 ,10.8801342, z],
+                        [ 106.8077757, 10.8801319,z],
+                        [ 106.8077887, 10.8801516,z],
+                        [ 106.8077847, 10.8801536,z],
+                        [ 106.8077888, 10.8801595,z],
+                        [ 106.8077924, 10.8801573,z],
+                        [ 106.8078048, 10.880177, z],
+                        [ 106.8078015, 10.8801797,z],
+                        [ 106.8078063, 10.8801871,z],
+                        [ 106.8078459, 10.8801632,z],
+                        [ 106.8078441, 10.8801598,z],
+                        [ 106.8078538, 10.8801539,z],
+                        [ 106.8078558, 10.8801569,z],
+                        [ 106.8078605, 10.880154, z],
+                        [ 106.8078581, 10.8801506,z],
+                        [ 106.8078693, 10.8801434,z],
+                        [ 106.8078719, 10.8801465,z],
+                        [ 106.8079732, 10.8800865,z],
+                        [ 106.8079822, 10.8800803,z],
+                        [ 106.8080385, 10.8801643,z],
+                        [ 106.8079058, 10.8802477,z],
+                        [ 106.8079078, 10.8802511,z],
+                        [ 106.8078907, 10.8802613,z],
+                        [ 106.8078883, 10.880258, z],
+                        [ 106.8078813, 10.880262, z],
+                        [ 106.8078837, 10.8802646,z],
+                        [ 106.8078658, 10.8802764,z],
+                        [ 106.8078637, 10.8802731,z],
+                        [ 106.8077919, 10.8803169,z],
+                        [ 106.8077634, 10.8803143,z],
+                        [ 106.8077478, 10.8802922,z],
+                        [ 106.8077455, 10.8802942,z],
+                        [ 106.8077304, 10.8802718,z],
+                        [ 106.8077334, 10.8802698,z],
+                        [ 106.8077062, 10.8802286,z],
+                        [ 106.8077035, 10.8802307,z],
+                        [ 106.8076885, 10.8802092,z],
+                        [ 106.8076915, 10.8802076,z],
+                        [ 106.8076891, 10.880204, z],
+                        [ 106.8076862, 10.880206, z],
+                        [ 106.8076754, 10.8801889,z],
+                        [ 106.8076781, 10.8801865,z],
+                        [ 106.8076301, 10.8801131,z],
+                        [ 106.8076268, 10.8801151,z],
+                        [ 106.807612 ,10.8800917, z],
+                        [ 106.8076147, 10.8800898,z],
+                        [ 106.8076117, 10.8800858,z],
+                        [ 106.8076087, 10.8800874,z],
+                        [ 106.8075939, 10.8800644,z],
+                        [ 106.8075963, 10.8800627,z],
+                        [ 106.8075514, 10.8799943,z],
+                        [ 106.8075477, 10.8799963,z],
+                        [ 106.807542 ,10.8799864, z],
+                        [ 106.8075449, 10.8799844,z],
+                    ]
+                ]
+            }
+            
+            function generateRoofRectangle(z){
+                return [
+                    [
+                        [106.8075259, 10.8799736,z],
+                        [106.8076339, 10.8799058,z], 
+                        [106.8078102, 10.8801737,z], 
+                        [106.8079859, 10.8800671,z], 
+                        [106.808057 ,10.8801659, z],
+                        [106.8077955, 10.8803273,z], 
+                        [106.8077572, 10.8803226,z], 
+                        [106.8075259, 10.8799736,z],
+                    ]
+                ]
+            }
+
+            const firstFloorZ = generateBuildingRings(17);
+            const firstFloorBancolZ = generateBancolRings(22);
+            const secondFloorBancolZ = generateBancolRings(30);
+            const thirdFloorBancolZ = generateBancolRings(38);
+            const fourthFloorBancolZ = generateBancolRings(46);
+            const firstWindowZ = generateWindowRings(22);
+            const secondWindowZ = generateWindowRings(30);
+            const thirdWindowZ = generateWindowRings(38);
+            const fourthWindowZ = generateWindowRings(46);
+            const roofRectangle = generateRoofRectangle(57);
+
+
+            const buildingSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 40, 
+                        material: {
+                            color: [245, 222, 108, 0.9]
+                        }
+                    })
+                ]
+            });
+
+            const bancolSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 3,
+                        material: {
+                            color: [96, 178, 224, 0.9]
+                        }
+                    })
+                ]
+            });
+            
+            const windowSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 7, 
+                        material: {
+                            color: [150, 68, 14, 0.9]
+                        }
+                    })
+                ]
+            });
+
+            const roofRectangleSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 2, 
+                        material: {
+                            color: [163, 134, 85, 0.9]
+                        }
+                    })
+                ]
+            });
+            
+
+            function addBuildings(allRings) {
+                allRings.forEach((ring) => {
+                    const building = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: buildingSymbology
+                    });
+                    sketchLayer.add(building);
+                });
+            }
+
+            function addBancols(allRings) {
+                allRings.forEach((ring) => {
+                    const bancol = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: bancolSymbology
+                    });
+                    sketchLayer.add(bancol);
+                });
+            }
+            
+            function addWindows(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: windowSymbology
+                    });
+                    sketchLayer.add(window);
+                });
+            }
+
+            function addRoofRectangle(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofRectangleSymbology
+                    });
+                    sketchLayer.add(window);
+                });
+            }
+            addBuildings(firstFloorZ);
+            addBancols(firstFloorBancolZ);
+            addBancols(secondFloorBancolZ);
+            addBancols(thirdFloorBancolZ);
+            addBancols(fourthFloorBancolZ);
+            addWindows(firstWindowZ);
+            addWindows(secondWindowZ);
+            addWindows(thirdWindowZ);
+            addWindows(fourthWindowZ);
+            addRoofRectangle(roofRectangle);
+
+            const roofTriangle1= [
+                [
+                    [106.80754,10.87997, 59],
+                    [106.80763,10.87992, 59],
+                    [106.80761,10.87999, 62]
+                ]
+            ]
+
+            const roofTriangle2= [
+                [
+                    [106.80754,10.87997, 59],
+                    [106.80761,10.87999, 62],
+                    [106.80779,10.88025,62],
+                    [106.80776,10.88031, 59]
+                ]
+            ]
+
+            const roofTriangle3=[
+                [
+                    [106.80763,10.87992, 59],
+                    [106.80761,10.87999, 62],
+                    [106.80779,10.88025,62],
+                    [106.8078,10.88018,59]
+                ]
+            ]
+
+            const roofTriangle4= [
+                [
+                    [106.80779,10.88025,62],
+                    [106.80776,10.88031, 59],
+                    [106.80779,10.88031, 59]
+                ]
+            ]
+
+            const roofTriangle5=[
+                [
+                [106.80779,10.88031, 59],
+                [106.80779,10.88025,62],
+                [106.80796,10.88015, 62],
+                [106.80804,10.88016, 59]
+                ]
+            ]
+
+            const roofTriangle6=[
+                [
+                    [106.80779,10.88025, 62],
+                    [106.8078,10.88018, 59],
+                    [106.80798,10.88007, 59],
+                    [106.80796,10.88015, 62]
+                ]
+            ]
+
+
+            const roofTriangle7=[
+                [
+                    [106.80804,10.88016, 59],
+                    [106.80796,10.88015, 62],
+                    [106.80798,10.88007, 59]
+                ]
+            ]
+        
+
+            const roofTriangleSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 0, 
+                        material: {
+                            color: [237, 55, 55, 0.9]
+                        }
+                    })
+                ]
+            });
+
+            function addTrianglePrismRoof(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    sketchLayer.add(window);
+                });
+            }
+
+            addTrianglePrismRoof(roofTriangle1);
+            addTrianglePrismRoof(roofTriangle2);
+            addTrianglePrismRoof(roofTriangle3);
+            addTrianglePrismRoof(roofTriangle4);
+            addTrianglePrismRoof(roofTriangle5);
+            addTrianglePrismRoof(roofTriangle6);
+            addTrianglePrismRoof(roofTriangle7);
+        });
+
+    </script>
+</head>
+
+<body>
+<div id="viewDiv"></div>
+</body>
+</html>
