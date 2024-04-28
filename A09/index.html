@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KTX khu A</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      #back {
+        position: absolute;
+        bottom: 20px;
+      }
+
+      #back i {
+        background-image: url(app/public/img/back.svg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        width: 100px;
+        height: 25px;
+        padding-left: 25px;
+        padding-top: 2px;
+        margin: 10px;
+        cursor: pointer;
+        background-size: 20px;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.16/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.24/"></script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <script>
+      require([
+        'esri/Map',
+        'esri/views/SceneView',
+        'esri/layers/GeoJSONLayer',
+        'esri/layers/SceneLayer',
+        'esri/layers/GraphicsLayer',
+        'esri/Graphic',
+        'esri/request',
+        'esri/geometry/Circle',
+      ], function (
+        Map,
+        SceneView,
+        GeoJSONLayer,
+        SceneLayer,
+        GraphicsLayer,
+        Graphic,
+        esriRequest,
+        Circle
+      ) {
+        const a09_main_building = new GeoJSONLayer({
+          url: "./A09_building/a09_main_building.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 5,
+                  material: {
+                    color: [255, 255, 255, 0.8],
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [50, 50, 50, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const a09_main_basement = new GeoJSONLayer({
+          url: "./A09_building/a09_main_basement.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 5,
+                  material: {
+                    color: [151, 255, 255,0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const a09_main_window = new GeoJSONLayer({
+          url: "./A09_building/a09_main_window.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 3,
+                  material: {
+                    color: [0, 138, 230, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const a09_sidewindow = new GeoJSONLayer({
+          url: "./A09_building/a09_sidewindow.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 1,
+                  material: {
+                    color: [255, 26, 26, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const map = new Map({
+          basemap: "topo-vector",
+          ground: "world-elevation",
+          layers: [
+            a09_main_basement,
+            a09_main_building,
+            a09_main_window,
+            a09_sidewindow
+            //....
+          ],
+        });
+        const view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          camera: {
+            position: [106.80702374335695, 10.87901553753987,700],
+            heading: 0,
+            tilt: 0,
+            fov: 140,
+          },
+        });
+
+        view.popup.defaultPopupTemplateEnabled = true;
+        //...
+      })
+    </script>
+  </body>
+</html>
