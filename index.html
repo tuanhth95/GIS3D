@@ -43,14 +43,15 @@
     <div id="viewDiv"></div>
     <script>
       require([
-        'esri/Map',
-        'esri/views/SceneView',
-        'esri/layers/GeoJSONLayer',
-        'esri/layers/SceneLayer',
-        'esri/layers/GraphicsLayer',
-        'esri/Graphic',
-        'esri/request',
-        'esri/geometry/Circle',
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/GeoJSONLayer",
+        "esri/layers/SceneLayer",
+        "esri/layers/GraphicsLayer",
+        "esri/symbols/edges/SolidEdges3D",
+        "esri/Graphic",
+        "esri/request",
+        "esri/geometry/Circle",
       ], function (
         Map,
         SceneView,
@@ -59,44 +60,131 @@
         GraphicsLayer,
         Graphic,
         esriRequest,
-        Circle
+        Circle,
+        SolidEdges3D
       ) {
-        const a2_building = new GeoJSONLayer({
-          url: "./a2_building/a2_demo.geojson",
-          renderer: {
+        var extrudeRenderer = function (s) {
+          return {
             type: "simple",
             symbol: {
               type: "polygon-3d",
               symbolLayers: [
                 {
                   type: "extrude",
-                  size: 5.6,
+                  size: s,
                   material: {
-                    color: "rgb(137,207,240)",
+                    color: "#7eadf7",
                   },
-                  edges: {
-                    type: "solid", // autocasts as new SolidEdges3D()
-                    color: [50, 50, 50, 1],
-                  },
+                  edges: new SolidEdges3D({
+                    size: 1,
+                    color: [82, 200, 82, 1],
+                  }),
                 },
               ],
             },
-          },
-        });
+          };
+        };
+        var setElevationInfo = function (s) {
+          return {
+            //mode: "absolute-height",
+            offset: s,
+            unit: "meters",
+          };
+        };
+        const structData = {
+          block_step: new GeoJSONLayer({
+            url: "a2_building/block_step.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(0),
+          }),
+          block_step_2: new GeoJSONLayer({
+            url: "a2_building/block_step_2.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(0.2),
+          }),
+          block_step_3: new GeoJSONLayer({
+            url: "a2_building/block_step_3.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(0.4),
+          }),
+          block_ground: new GeoJSONLayer({
+            url: "a2_building/block_ground.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(0.6),
+          }),
+          block_base_2: new GeoJSONLayer({
+            url: "a2_building/block_base_2.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(4.1),
+          }),
+          block_wall_2: new GeoJSONLayer({
+            url: "a2_building/block_wall_2.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(4.3),
+          }),
+          block_2: new GeoJSONLayer({
+            url: "a2_building/block_2.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(4.3),
+          }),
+          block_base_3: new GeoJSONLayer({
+            url: "a2_building/block_base_3.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(7.8),
+          }),
+          block_wall_3: new GeoJSONLayer({
+            url: "a2_building/block_wall_3.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(8),
+          }),
+          block_3: new GeoJSONLayer({
+            url: "a2_building/block_3.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(8),
+          }),
+          block_base_4: new GeoJSONLayer({
+            url: "a2_building/block_base_4.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(11.5),
+          }),
+          block_wall_4: new GeoJSONLayer({
+            url: "a2_building/block_wall_4.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(11.7),
+          }),
+          block_4: new GeoJSONLayer({
+            url: "a2_building/block_4.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(11.7),
+          }),
+          block_base_5: new GeoJSONLayer({
+            url: "a2_building/block_base_5.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(15.2),
+          }),
+          block_wall_5: new GeoJSONLayer({
+            url: "a2_building/block_wall_5.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(15.4),
+          }),
+          block_5: new GeoJSONLayer({
+            url: "a2_building/block_5.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(15.4),
+          }),
+        };
+
         const map = new Map({
           basemap: "topo-vector",
           ground: "world-elevation",
-          layers: [
-            a2_building,
-            //ag3_building,
-            //....
-          ],
+          layers: Object.values(structData),
         });
+
         const view = new SceneView({
           container: "viewDiv",
           map: map,
           camera: {
-            position: [106.808074, 10.8785612,700],
+            position: [106.808074, 10.8785612, 700],
             heading: 0,
             tilt: 0,
             fov: 120,
@@ -105,7 +193,7 @@
 
         view.popup.defaultPopupTemplateEnabled = true;
         //...
-      })
+      });
     </script>
   </body>
 </html>
