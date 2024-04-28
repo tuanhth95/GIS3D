@@ -49,6 +49,7 @@
         "esri/layers/SceneLayer",
         "esri/layers/GraphicsLayer",
         "esri/symbols/edges/SolidEdges3D",
+        "esri/symbols/edges/SketchEdges3D",
         "esri/Graphic",
         "esri/request",
         "esri/geometry/Circle",
@@ -61,7 +62,8 @@
         Graphic,
         esriRequest,
         Circle,
-        SolidEdges3D
+        SolidEdges3D,
+        SketchEdges3D
       ) {
         var extrudeRenderer = function (s) {
           return {
@@ -82,7 +84,6 @@
                 },
               ],
             },
-<<<<<<< HEAD
           };
         };
         var setElevationInfo = function (s) {
@@ -175,13 +176,6 @@
           }),
         };
 
-        const map = new Map({
-          basemap: "topo-vector",
-          ground: "world-elevation",
-          layers: Object.values(structData),
-=======
-          },
-        });
         const ag3_main_building = new GeoJSONLayer({
           url: "./ag3_building/ag3_main_building.geojson",
           renderer: {
@@ -406,7 +400,6 @@
           basemap: "topo-vector",
           ground: "world-elevation",
           layers: [
-            a2_building,
             ag3_basement,
             ag3_main_building,
             ag3_top_floor,
@@ -417,9 +410,8 @@
             ag3_red_window,
             ag3_front_small_window,
             ag3_basement_big,
-            //....
+            ...Object.values(structData)
           ],
->>>>>>> hungtd/lab2
         });
 
         const view = new SceneView({
