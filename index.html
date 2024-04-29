@@ -396,6 +396,75 @@
             },
           },
         });
+        //Tòa A6
+        const a6_door = new GeoJSONLayer({
+          url: "./A6_building/a6_door.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 10,
+                  material: {
+                    color: [0, 204, 0, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const a6_main_building = new GeoJSONLayer({
+          url: "./A6_building/a6_main_building.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 15,
+                  material: {
+                    color: [255, 255, 255, 0.8],
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [50, 50, 50, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const a6_window = new GeoJSONLayer({
+          url: "./A6_building/a6_window.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 8,
+                  material: {
+                    color: [151, 255, 255,0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        
+
         const map = new Map({
           basemap: "topo-vector",
           ground: "world-elevation",
@@ -410,7 +479,11 @@
             ag3_red_window,
             ag3_front_small_window,
             ag3_basement_big,
-            ...Object.values(structData)
+            ...Object.values(structData),
+            //Tòa A6
+            a6_door,
+            a6_main_building,
+            a6_window
           ],
         });
 
