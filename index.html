@@ -1,0 +1,5097 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KTX khu A</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      #back {
+        position: absolute;
+        bottom: 20px;
+      }
+
+      #back i {
+        background-image: url(app/public/img/back.svg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        width: 100px;
+        height: 25px;
+        padding-left: 25px;
+        padding-top: 2px;
+        margin: 10px;
+        cursor: pointer;
+        background-size: 20px;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.16/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.24/"></script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/GeoJSONLayer",
+        "esri/layers/SceneLayer",
+        "esri/layers/GraphicsLayer",
+        "esri/symbols/edges/SolidEdges3D",
+        "esri/symbols/edges/SketchEdges3D",
+        "esri/Graphic",
+        "esri/request",
+        "esri/geometry/Circle",
+        "esri/symbols/PolygonSymbol3D",
+        "esri/symbols/ExtrudeSymbol3DLayer",
+        "esri/geometry/Polygon"
+      ], function (
+        Map,
+        SceneView,
+        GeoJSONLayer,
+        SceneLayer,
+        GraphicsLayer,
+        Graphic,
+        esriRequest,
+        Circle,
+        SolidEdges3D,
+        SketchEdges3D,
+        PolygonSymbol3D,
+        ExtrudeSymbol3DLayer,
+        Polygon
+      ) {
+        var extrudeRenderer = function (s) {
+          return {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: s,
+                  material: {
+                    color: "#7eadf7",
+                  },
+                  edges: new SolidEdges3D({
+                    size: 1,
+                    color: [82, 200, 82, 1],
+                  }),
+                },
+              ],
+            },
+          };
+        };
+        var setElevationInfo = function (s) {
+          return {
+            //mode: "absolute-height",
+            offset: s,
+            unit: "meters",
+          };
+        };
+        const structData = {
+          block_step: new GeoJSONLayer({
+            url: "a2_building/block_step.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(0),
+          }),
+          block_step_2: new GeoJSONLayer({
+            url: "a2_building/block_step_2.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(0.2),
+          }),
+          block_step_3: new GeoJSONLayer({
+            url: "a2_building/block_step_3.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(0.4),
+          }),
+          block_ground: new GeoJSONLayer({
+            url: "a2_building/block_ground.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(0.6),
+          }),
+          block_base_2: new GeoJSONLayer({
+            url: "a2_building/block_base_2.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(4.1),
+          }),
+          block_wall_2: new GeoJSONLayer({
+            url: "a2_building/block_wall_2.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(4.3),
+          }),
+          block_2: new GeoJSONLayer({
+            url: "a2_building/block_2.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(4.3),
+          }),
+          block_base_3: new GeoJSONLayer({
+            url: "a2_building/block_base_3.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(7.8),
+          }),
+          block_wall_3: new GeoJSONLayer({
+            url: "a2_building/block_wall_3.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(8),
+          }),
+          block_3: new GeoJSONLayer({
+            url: "a2_building/block_3.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(8),
+          }),
+          block_base_4: new GeoJSONLayer({
+            url: "a2_building/block_base_4.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(11.5),
+          }),
+          block_wall_4: new GeoJSONLayer({
+            url: "a2_building/block_wall_4.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(11.7),
+          }),
+          block_4: new GeoJSONLayer({
+            url: "a2_building/block_4.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(11.7),
+          }),
+          block_base_5: new GeoJSONLayer({
+            url: "a2_building/block_base_5.geojson",
+            renderer: extrudeRenderer(0.2),
+            elevationInfo: setElevationInfo(15.2),
+          }),
+          block_wall_5: new GeoJSONLayer({
+            url: "a2_building/block_wall_5.geojson",
+            renderer: extrudeRenderer(1),
+            elevationInfo: setElevationInfo(15.4),
+          }),
+          block_5: new GeoJSONLayer({
+            url: "a2_building/block_5.geojson",
+            renderer: extrudeRenderer(3.5),
+            elevationInfo: setElevationInfo(15.4),
+          }),
+        };
+
+        const ag3_main_building = new GeoJSONLayer({
+          url: "./ag3_building/ag3_main_building.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 5,
+                  material: {
+                    color: [255, 255, 255, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_basement = new GeoJSONLayer({
+          url: "./ag3_building/ag3_basement.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 5,
+                  material: {
+                    color: [255, 204, 255, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_top_floor = new GeoJSONLayer({
+          url: "./ag3_building/ag3_top_floor.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 1,
+                  material: {
+                    color: [0, 51, 204, 0.9]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_top_small_floor = new GeoJSONLayer({
+          url: "./ag3_building/ag3_top_small_floor.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 1,
+                  material: {
+                    color: [255, 102, 204, 0.9]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_big_mid_window = new GeoJSONLayer({
+          url: "./ag3_building/ag3_big_mid_window.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 3,
+                  material: {
+                    color: [0, 138, 230, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_side_mid_window = new GeoJSONLayer({
+          url: "./ag3_building/ag3_side_mid_window.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 3,
+                  material: {
+                    color: [187, 255, 153, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_frame = new GeoJSONLayer({
+          url: "./ag3_building/ag3_frame.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 5,
+                  material: {
+                    color: [153, 214, 255, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_red_window = new GeoJSONLayer({
+          url: "./ag3_building/ag3_red_window.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 3,
+                  material: {
+                    color: [255, 26, 26, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_front_small_window = new GeoJSONLayer({
+          url: "./ag3_building/ag3_front_small_window.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 1,
+                  material: {
+                    color: [0, 102, 0, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const ag3_basement_big = new GeoJSONLayer({
+          url: "./ag3_building/ag3_basement_big.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 4,
+                  material: {
+                    color: [194, 153, 255, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        //Tòa A6
+        const a6_door = new GeoJSONLayer({
+          url: "./A6_building/a6_door.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 10,
+                  material: {
+                    color: [0, 204, 0, 0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const a6_main_building = new GeoJSONLayer({
+          url: "./A6_building/a6_main_building.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 15,
+                  material: {
+                    color: [255, 255, 255, 0.8],
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [50, 50, 50, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+        const a6_window = new GeoJSONLayer({
+          url: "./A6_building/a6_window.geojson",
+          renderer: {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: 8,
+                  material: {
+                    color: [151, 255, 255,0.8]
+                  },
+                  edges: {
+                    type: "solid", // autocasts as new SolidEdges3D()
+                    color: [82, 82, 122, 1],
+                  },
+                },
+              ],
+            },
+          },
+        });
+
+        const buildingLayer = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+
+                const bancolLayer1 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const bancolLayer2 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const bancolLayer3 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const bancolLayer4 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                function generateBuildingRings(z) {
+                return [[
+                    [106.80776,10.880314152985868,z],
+                    [106.8075409,10.879978318744286, z],
+                    [106.80763184869983,10.879917, z],
+                    [106.8078065,10.8801855, z],
+                    [106.807984,10.880075, z],
+                    [106.8080484,10.880161, z],
+                    [106.807795,10.88032, z]
+                ]];
+            }
+
+            const firstFloorZ = generateBuildingRings(17);
+            const buildingSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 40, 
+                        material: {
+                            color: [245, 222, 108, 0.9]
+                        }
+                    })
+                ]
+            });
+
+            function addBuildings(allRings) {
+                allRings.forEach((ring) => {
+                    const building = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: buildingSymbology
+                    });
+                    buildingLayer.add(building);
+                });
+            }
+            addBuildings(firstFloorZ);
+
+
+            function generateBancolRings(z) {
+                return [
+                    [
+                        [106.8075422, 10.8799795, z],
+                        [106.8075559, 10.8799999, z],
+                        [106.8075506, 10.8800035, z],
+                        [106.8075516, 10.8800108, z],
+                        [106.80756 ,10.8800223, z],
+                        [106.8075653, 10.880023, z],
+                        [106.8075693, 10.8800203,z],
+                        [106.8075777, 10.8800335,z],
+                        [106.8075727, 10.8800361,z],
+                        [106.807572 ,10.8800407, z],
+                        [106.8075824, 10.8800565,z],
+                        [106.8075864, 10.8800572,z],
+                        [106.8075911, 10.8800546,z],
+                        [106.8076374, 10.8801234,z],
+                        [106.807632 ,10.8801263, z],
+                        [106.807632 ,10.8801333, z],
+                        [106.8076414, 10.8801474,z],
+                        [106.8076478, 10.8801477,z],
+                        [106.8076512, 10.8801454,z],
+                        [106.8076609, 10.8801596,z],
+                        [106.8076562, 10.8801622,z],
+                        [106.8076548, 10.8801675,z],
+                        [106.8076646, 10.880183, z],
+                        [106.8076693, 10.8801833,z],
+                        [106.8076746, 10.8801807,z],
+                        [106.8077098, 10.880234, z],
+                        [106.8077028, 10.8802376,z],
+                        [106.8077018, 10.8802422,z],
+                        [106.8077125, 10.880258, z],
+                        [106.8077172, 10.880258, z],
+                        [106.8077236, 10.8802541,z],
+                        [106.8077634, 10.8803143,z],
+                        [106.8077919, 10.8803169,z],
+                        [106.8078248, 10.8802962,z],
+                        [106.8078315, 10.8803054,z],
+                        [106.8078429, 10.8803047,z],
+                        [106.8078636, 10.8802916,z],
+                        [106.8078663, 10.8802843,z],
+                        [106.807861 ,10.8802744, z],
+                        [106.8079113, 10.8802435,z],
+                        [106.807918 ,10.8802534, z],
+                        [106.807928 ,10.8802527, z],
+                        [106.8079515, 10.8802376,z],
+                        [106.8079542, 10.8802313,z],
+                        [106.8079488, 10.8802224,z],
+                        [106.8079644, 10.8802124,z],
+                        [106.8079705, 10.8802222,z],
+                        [106.8079782, 10.8802236,z],
+                        [106.8079983, 10.880211, z],
+                        [106.8079986, 10.8802058,z],
+                        [106.8079922, 10.8801956,z],
+                        [106.8080429, 10.880164, z],
+                        [106.8079829, 10.880078, z],
+                        [106.8079353, 10.880107, z],
+                        [106.8079309, 10.8801001,z],
+                        [106.8079249, 10.8801004,z],
+                        [106.8079091, 10.8801096,z],
+                        [106.8079091, 10.8801152,z],
+                        [106.8079135, 10.8801212,z],
+                        [106.8078987, 10.8801304,z],
+                        [106.807895 ,10.8801245, z],
+                        [106.8078893, 10.8801241,z],
+                        [106.8078699, 10.8801353,z],
+                        [106.8078702, 10.8801396,z],
+                        [106.8078742, 10.8801452,z],
+                        [106.8078429, 10.8801648,z],
+                        [106.807839 ,10.8801584, z],
+                        [106.8078323, 10.880159, z],
+                        [106.8078177, 10.8801667,z],
+                        [106.807817 ,10.8801719, z],
+                        [106.80782 ,10.8801772, z],
+                        [106.8078063, 10.8801871,z],
+                        [106.8077684, 10.8801268,z],
+                        [106.8077734, 10.8801239,z],
+                        [106.8077744, 10.8801183,z],
+                        [106.8077664, 10.8801067,z],
+                        [106.8077624, 10.8801071,z],
+                        [106.8077567, 10.8801107,z],
+                        [106.8077506, 10.8801001,z],
+                        [106.8077557, 10.8800969,z],
+                        [106.807757 ,10.8800932, z],
+                        [106.807748 ,10.8800784, z],
+                        [106.8077439, 10.8800781,z],
+                        [106.8077382, 10.8800817,z],
+                        [106.8076809, 10.8799948,z],
+                        [106.8076859, 10.8799912,z],
+                        [106.8076863, 10.8799866,z],
+                        [106.8076782, 10.8799744,z],
+                        [106.8076742, 10.879974, z],
+                        [106.8076688, 10.8799763,z],
+                        [106.8076608, 10.8799622,z],
+                        [106.8076655, 10.8799592,z],
+                        [106.8076662, 10.8799533,z],
+                        [106.8076568, 10.8799391,z],
+                        [106.8076517, 10.8799391,z],
+                        [106.8076464, 10.8799418,z],
+                        [106.8076323, 10.879921, z],
+                        [106.8075422, 10.8799795,z],
+                    ]
+                ]
+            }
+            const firstFloorBancolZ = generateBancolRings(22);
+            const secondFloorBancolZ = generateBancolRings(30);
+            const thirdFloorBancolZ = generateBancolRings(38);
+            const fourthFloorBancolZ = generateBancolRings(46);
+
+              const bancolSymbology = new PolygonSymbol3D({
+                  symbolLayers: [
+                      new ExtrudeSymbol3DLayer({
+                          size: 3,
+                          material: {
+                              color: [96, 178, 224, 0.9]
+                          }
+                      })
+                  ]
+              });
+
+              function addBancol1(allRings) {
+                  allRings.forEach((ring) => {
+                      const bancol = new Graphic({
+                          geometry: new Polygon({
+                              rings: ring
+                          }),
+                          symbol: bancolSymbology
+                      });
+                      bancolLayer1.add(bancol);
+                  });
+              }
+
+              function addBancol2(allRings) {
+                  allRings.forEach((ring) => {
+                      const bancol = new Graphic({
+                          geometry: new Polygon({
+                              rings: ring
+                          }),
+                          symbol: bancolSymbology
+                      });
+                      bancolLayer2.add(bancol);
+                  });
+              }
+
+              function addBancol3(allRings) {
+                  allRings.forEach((ring) => {
+                      const bancol = new Graphic({
+                          geometry: new Polygon({
+                              rings: ring
+                          }),
+                          symbol: bancolSymbology
+                      });
+                      bancolLayer3.add(bancol);
+                  });
+              }
+
+              function addBancol4(allRings) {
+                  allRings.forEach((ring) => {
+                      const bancol = new Graphic({
+                          geometry: new Polygon({
+                              rings: ring
+                          }),
+                          symbol: bancolSymbology
+                      });
+                      bancolLayer4.add(bancol);
+                  });
+              }
+
+              addBancol1(firstFloorBancolZ);
+              addBancol2(secondFloorBancolZ);
+              addBancol3(thirdFloorBancolZ);
+              addBancol4(fourthFloorBancolZ);
+
+
+              function generateWindowRings(z) {
+                return [
+                    [
+                        [106.8075449, 10.8799844,z],
+                        [ 106.8075422, 10.8799795,z],
+                        [ 106.8076323, 10.879921, z],
+                        [ 106.8076372, 10.8799284,z],
+                        [ 106.8076408, 10.8799264,z],
+                        [ 106.8076469, 10.8799363,z],
+                        [ 106.8076436, 10.8799386,z],
+                        [ 106.8076888, 10.8800065,z],
+                        [ 106.8076922, 10.8800041,z],
+                        [ 106.807712 ,10.8800344, z],
+                        [ 106.8077083, 10.8800364,z],
+                        [ 106.8077123, 10.8800443,z],
+                        [ 106.8077163, 10.8800417,z],
+                        [ 106.8077347, 10.88007, z],
+                        [ 106.8077311, 10.8800723,z],
+                        [ 106.807772 ,10.8801342, z],
+                        [ 106.8077757, 10.8801319,z],
+                        [ 106.8077887, 10.8801516,z],
+                        [ 106.8077847, 10.8801536,z],
+                        [ 106.8077888, 10.8801595,z],
+                        [ 106.8077924, 10.8801573,z],
+                        [ 106.8078048, 10.880177, z],
+                        [ 106.8078015, 10.8801797,z],
+                        [ 106.8078063, 10.8801871,z],
+                        [ 106.8078459, 10.8801632,z],
+                        [ 106.8078441, 10.8801598,z],
+                        [ 106.8078538, 10.8801539,z],
+                        [ 106.8078558, 10.8801569,z],
+                        [ 106.8078605, 10.880154, z],
+                        [ 106.8078581, 10.8801506,z],
+                        [ 106.8078693, 10.8801434,z],
+                        [ 106.8078719, 10.8801465,z],
+                        [ 106.8079732, 10.8800865,z],
+                        [ 106.8079822, 10.8800803,z],
+                        [ 106.8080385, 10.8801643,z],
+                        [ 106.8079058, 10.8802477,z],
+                        [ 106.8079078, 10.8802511,z],
+                        [ 106.8078907, 10.8802613,z],
+                        [ 106.8078883, 10.880258, z],
+                        [ 106.8078813, 10.880262, z],
+                        [ 106.8078837, 10.8802646,z],
+                        [ 106.8078658, 10.8802764,z],
+                        [ 106.8078637, 10.8802731,z],
+                        [ 106.8077919, 10.8803169,z],
+                        [ 106.8077634, 10.8803143,z],
+                        [ 106.8077478, 10.8802922,z],
+                        [ 106.8077455, 10.8802942,z],
+                        [ 106.8077304, 10.8802718,z],
+                        [ 106.8077334, 10.8802698,z],
+                        [ 106.8077062, 10.8802286,z],
+                        [ 106.8077035, 10.8802307,z],
+                        [ 106.8076885, 10.8802092,z],
+                        [ 106.8076915, 10.8802076,z],
+                        [ 106.8076891, 10.880204, z],
+                        [ 106.8076862, 10.880206, z],
+                        [ 106.8076754, 10.8801889,z],
+                        [ 106.8076781, 10.8801865,z],
+                        [ 106.8076301, 10.8801131,z],
+                        [ 106.8076268, 10.8801151,z],
+                        [ 106.807612 ,10.8800917, z],
+                        [ 106.8076147, 10.8800898,z],
+                        [ 106.8076117, 10.8800858,z],
+                        [ 106.8076087, 10.8800874,z],
+                        [ 106.8075939, 10.8800644,z],
+                        [ 106.8075963, 10.8800627,z],
+                        [ 106.8075514, 10.8799943,z],
+                        [ 106.8075477, 10.8799963,z],
+                        [ 106.807542 ,10.8799864, z],
+                        [ 106.8075449, 10.8799844,z],
+                    ]
+                ]
+            }
+            const windowLayer1 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const windowLayer2 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const windowLayer3 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const windowLayer4 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+
+
+            const firstWindowZ = generateWindowRings(22);
+            const secondWindowZ = generateWindowRings(30);
+            const thirdWindowZ = generateWindowRings(38);
+            const fourthWindowZ = generateWindowRings(46);
+            const windowSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 7, 
+                        material: {
+                            color: [150, 68, 14, 0.9]
+                        }
+                    })
+                ]
+            });
+            function addWindow1(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: windowSymbology
+                    });
+                    windowLayer1.add(window);
+                });
+            }
+            function addWindow2(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: windowSymbology
+                    });
+                    windowLayer2.add(window);
+                });
+            }
+            function addWindow3(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: windowSymbology
+                    });
+                    windowLayer3.add(window);
+                });
+            }
+            function addWindow4(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: windowSymbology
+                    });
+                    windowLayer4.add(window);
+                });
+            }
+            addWindow1(firstWindowZ);
+            addWindow2(secondWindowZ);
+            addWindow3(thirdWindowZ);
+            addWindow4(fourthWindowZ);
+
+            function generateRoofRectangle(z){
+                return [
+                    [
+                        [106.8075259, 10.8799736,z],
+                        [106.8076339, 10.8799058,z], 
+                        [106.8078102, 10.8801737,z], 
+                        [106.8079859, 10.8800671,z], 
+                        [106.808057 ,10.8801659, z],
+                        [106.8077955, 10.8803273,z], 
+                        [106.8077572, 10.8803226,z], 
+                        [106.8075259, 10.8799736,z],
+                    ]
+                ]
+            }
+
+            const roofRectangleLayer = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+
+            const roofRectangle = generateRoofRectangle(57);
+            const roofRectangleSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 2, 
+                        material: {
+                            color: [163, 134, 85, 0.9]
+                        }
+                    })
+                ]
+            });
+
+            function addRoofRectangle(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofRectangleSymbology
+                    });
+                    roofRectangleLayer.add(window);
+                });
+            }
+
+            addRoofRectangle(roofRectangle);
+
+            const roofTriangleLayer1 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+
+                const roofTriangleLayer2 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const roofTriangleLayer3 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const roofTriangleLayer4 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const roofTriangleLayer5 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const roofTriangleLayer6 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+                const roofTriangleLayer7 = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+
+
+            const roofTriangle1= [
+                [
+                    [106.80754,10.87997, 59],
+                    [106.80763,10.87992, 59],
+                    [106.80761,10.87999, 62]
+                ]
+            ]
+
+            const roofTriangle2= [
+                [
+                    [106.80754,10.87997, 59],
+                    [106.80761,10.87999, 62],
+                    [106.80779,10.88025,62],
+                    [106.80776,10.88031, 59]
+                ]
+            ]
+
+            const roofTriangle3=[
+                [
+                    [106.80763,10.87992, 59],
+                    [106.80761,10.87999, 62],
+                    [106.80779,10.88025,62],
+                    [106.8078,10.88018,59]
+                ]
+            ]
+
+            const roofTriangle4= [
+                [
+                    [106.80779,10.88025,62],
+                    [106.80776,10.88031, 59],
+                    [106.80779,10.88031, 59]
+                ]
+            ]
+
+            const roofTriangle5=[
+                [
+                [106.80779,10.88031, 59],
+                [106.80779,10.88025,62],
+                [106.80796,10.88015, 62],
+                [106.80804,10.88016, 59]
+                ]
+            ]
+
+            const roofTriangle6=[
+                [
+                    [106.80779,10.88025, 62],
+                    [106.8078,10.88018, 59],
+                    [106.80798,10.88007, 59],
+                    [106.80796,10.88015, 62]
+                ]
+            ]
+
+
+            const roofTriangle7=[
+                [
+                    [106.80804,10.88016, 59],
+                    [106.80796,10.88015, 62],
+                    [106.80798,10.88007, 59]
+                ]
+            ]
+        
+
+            const roofTriangleSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 0, 
+                        material: {
+                            color: [237, 55, 55, 0.9]
+                        }
+                    })
+                ]
+            });
+
+            function addTrianglePrismRoof1(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    roofTriangleLayer1.add(window);
+                });
+            }
+
+            function addTrianglePrismRoof2(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    roofTriangleLayer2.add(window);
+                });
+            }
+            function addTrianglePrismRoof3(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    roofTriangleLayer3.add(window);
+                });
+            }
+            function addTrianglePrismRoof4(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    roofTriangleLayer4.add(window);
+                });
+            }
+            function addTrianglePrismRoof5(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    roofTriangleLayer5.add(window);
+                });
+            }
+            function addTrianglePrismRoof6(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    roofTriangleLayer6.add(window);
+                });
+            }
+            function addTrianglePrismRoof7(allRings) {
+                allRings.forEach((ring) => {
+                    const window = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: roofTriangleSymbology
+                    });
+                    roofTriangleLayer7.add(window);
+                });
+            }
+
+
+            addTrianglePrismRoof1(roofTriangle1);
+            addTrianglePrismRoof2(roofTriangle2);
+            addTrianglePrismRoof3(roofTriangle3);
+            addTrianglePrismRoof4(roofTriangle4);
+            addTrianglePrismRoof5(roofTriangle5);
+            addTrianglePrismRoof6(roofTriangle6);
+            addTrianglePrismRoof7(roofTriangle7);
+
+
+        const map = new Map({
+          basemap: "topo-vector",
+          ground: "world-elevation",
+          layers: [
+            ag3_basement,
+            ag3_main_building,
+            ag3_top_floor,
+            ag3_top_small_floor,
+            ag3_big_mid_window,
+            ag3_side_mid_window,
+            ag3_frame,
+            ag3_red_window,
+            ag3_front_small_window,
+            ag3_basement_big,
+            ...Object.values(structData),
+            //Tòa A6
+            a6_door,
+            a6_main_building,
+            a6_window,
+            buildingLayer,
+            bancolLayer1,
+            bancolLayer2,
+            bancolLayer3,
+            bancolLayer4,
+            windowLayer1,
+            windowLayer2,
+            windowLayer3,
+            windowLayer4,
+            roofRectangleLayer,
+            roofTriangleLayer1,
+            roofTriangleLayer2,
+            roofTriangleLayer3,
+            roofTriangleLayer4,
+            roofTriangleLayer5,
+            roofTriangleLayer6,
+            roofTriangleLayer7
+          ],
+        });
+
+        const view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          camera: {
+            position: [106.808074, 10.8785612, 700],
+            heading: 0,
+            tilt: 0,
+            // fov: 120,
+          },
+        });
+
+        view.popup.defaultPopupTemplateEnabled = true;
+        //...
+      });
+      let jsondata = {
+		
+		polygons: [
+			{//building
+				type: "polygon",
+				rings: [
+					[106.80768042758969, 10.879228856494164, 100],
+					[ 106.80774211839312, 10.879317095553372, 100],
+					[ 106.8079191441769, 10.879210418478495, 100], 
+					[ 106.80808410002089, 10.879476452594139, 100],
+					[ 106.80817858530965, 10.879418369591903, 100],
+					[ 106.807960718414, 10.879083986340307, 100],
+					[ 106.8079178030725, 10.879081352336849, 100],
+					[106.80768042758969, 10.879228856494164, 100]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building side1
+				type: "polygon",
+				rings: [
+					[106.80768042758969, 10.879228856494164, 100],
+					[106.80774211839312, 10.879317095553372, 100],
+					[106.80774211839312, 10.879317095553372, 125],
+					[106.80768042758969, 10.879228856494164, 125],
+					[106.80768042758969, 10.879228856494164, 100]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building side2
+				type: "polygon",
+				rings: [
+					[ 106.80774211839312, 10.879317095553372, 100],
+					[ 106.8079191441769, 10.879210418478495, 100],
+					[ 106.8079191441769, 10.879210418478495, 125],
+					[ 106.80774211839312, 10.879317095553372, 125],
+					[ 106.80774211839312, 10.879317095553372, 100]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building side3
+				type: "polygon",
+				rings: [
+					[ 106.8079191441769, 10.879210418478495, 100], 
+					[ 106.80808410002089, 10.879476452594139, 100],
+					[ 106.80808410002089, 10.879476452594139, 125],
+					[ 106.8079191441769, 10.879210418478495, 125],
+					[ 106.8079191441769, 10.879210418478495, 100]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building side4
+				type: "polygon",
+				rings: [
+					[ 106.80808410002089, 10.879476452594139, 100],
+					[ 106.80817858530965, 10.879418369591903, 100],
+					[ 106.80817858530965, 10.879418369591903, 125],
+					[ 106.80808410002089, 10.879476452594139, 125],
+					[ 106.80808410002089, 10.879476452594139, 100]
+					
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building side5
+				type: "polygon",
+				rings: [
+					[ 106.80817858530965, 10.879418369591903, 100],
+					[ 106.807960718414, 10.879083986340307, 100],
+					[ 106.807960718414, 10.879083986340307, 125],
+					[ 106.80817858530965, 10.879418369591903, 125],
+					[ 106.80817858530965, 10.879418369591903, 100],
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building side6
+				type: "polygon",
+				rings: [
+					[ 106.807960718414, 10.879083986340307, 100],
+					[ 106.8079178030725, 10.879081352336849, 100],
+					[ 106.8079178030725, 10.879081352336849, 125],
+					[ 106.807960718414, 10.879083986340307, 125],
+					[ 106.807960718414, 10.879083986340307, 100],
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building side7
+				type: "polygon",
+				rings: [
+					[ 106.8079178030725, 10.879081352336849, 100],
+					[106.80768042758969, 10.879228856494164, 100],
+					[106.80768042758969, 10.879228856494164, 125],
+					[ 106.8079178030725, 10.879081352336849, 125],
+					[ 106.8079178030725, 10.879081352336849, 100],
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			{//building top
+				type: "polygon",
+				rings: [
+					[106.80768042758969, 10.879228856494164, 125],
+					[ 106.80774211839312, 10.879317095553372, 125],
+					[ 106.8079191441769, 10.879210418478495, 125], 
+					[ 106.80808410002089, 10.879476452594139, 125],
+					[ 106.80817858530965, 10.879418369591903, 125],
+					[ 106.807960718414, 10.879083986340307, 125],
+					[ 106.8079178030725, 10.879081352336849, 125],
+					[106.80768042758969, 10.879228856494164, 125]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [192,192,192, 0.6],
+					outline: {
+						color: [128,128,128],
+						width: 1
+					}
+				}
+
+			},
+			//f1
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80771490575589, 10.87920941829364, 105],
+					[106.80773703397887, 10.87919361427924, 105],
+					[106.80773234011338, 10.879187029273, 105],
+					[106.80770887078599, 10.879199540784748, 105],
+					[106.80771490575589, 10.87920941829364, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773703397887, 10.87919361427924, 105],
+					[106.80773234011338, 10.879187029273, 105],
+					[106.80773234011338, 10.879187029273, 106.5],
+					[106.80773703397887, 10.87919361427924, 106.5],
+					[106.80773703397887, 10.87919361427924, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773234011338, 10.879187029273, 105],
+					[106.80770887078599, 10.879199540784748, 105],
+					[106.80770887078599, 10.879199540784748, 106.5],
+					[106.80773234011338, 10.879187029273, 106.5],
+					[106.80773234011338, 10.879187029273, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80770887078599, 10.879199540784748, 105],
+					[106.80771490575589, 10.87920941829364, 105],
+					[106.80771490575589, 10.87920941829364, 106.5],
+					[106.80770887078599, 10.879199540784748, 106.5],
+					[106.80770887078599, 10.879199540784748, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80777190269386, 10.879171883758085, 105],
+					[106.80780341864778, 10.879152787238189, 105],
+					[106.8077980542301, 10.879144226728865, 105],
+					[106.80776720882838, 10.879163981750002, 105],
+					[106.80777190269386, 10.879171883758085, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80780341864778, 10.879152787238189, 105],
+					[106.8077980542301, 10.879144226728865, 105],
+					[106.8077980542301, 10.879144226728865, 106.5],
+					[106.80780341864778, 10.879152787238189, 106.5],
+					[106.80780341864778, 10.879152787238189, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8077980542301, 10.879144226728865, 105],
+					[106.80776720882838, 10.879163981750002, 105],
+					[106.80776720882838, 10.879163981750002, 106.5],
+					[106.8077980542301, 10.879144226728865, 106.5],
+					[106.8077980542301, 10.879144226728865, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80776720882838, 10.879163981750002, 105],
+					[106.80777190269386, 10.879171883758085, 105],
+					[106.80777190269386, 10.879171883758085, 106.5],
+					[106.80776720882838, 10.879163981750002, 106.5],
+					[106.80776720882838, 10.879163981750002, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80784566343708, 10.879125130207186, 105],
+					[106.80787919104766, 10.879106692185095, 105],
+					[106.80787315607775, 10.87909813167446, 105],
+					[106.8078402990194, 10.879116569697075, 105],
+					[106.80784566343708, 10.879125130207186, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787919104766, 10.879106692185095, 105],
+					[106.80787315607775, 10.87909813167446, 105],
+					[106.80787315607775, 10.87909813167446, 106.5],
+					[106.80787919104766, 10.879106692185095, 106.5],
+					[106.80787919104766, 10.879106692185095, 105]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787315607775, 10.87909813167446, 105],
+					[106.8078402990194, 10.879116569697075, 105],
+					[106.8078402990194, 10.879116569697075, 106.5],
+					[106.80787315607775, 10.87909813167446, 106.5],
+					[106.80787315607775, 10.87909813167446, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8078402990194, 10.879116569697075, 105],
+					[106.80784566343708, 10.879125130207186, 105],
+					[106.80784566343708, 10.879125130207186, 106.5],
+					[106.8078402990194, 10.879116569697075, 106.5],
+					[106.8078402990194, 10.879116569697075, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.8079827121667, 10.879119393450402, 105],
+					[106.80800222569242, 10.879149128860686, 105],
+					[106.80801030025481, 10.879143842565734, 105],
+					[106.80799078672906, 10.879113446368002, 105],
+					[106.8079827121667, 10.879119393450402, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80800222569242, 10.879149128860686, 105],
+					[106.80801030025481, 10.879143842565734, 105],
+					[106.80801030025481, 10.879143842565734, 106.5],
+					[106.80800222569242, 10.879149128860686, 106.5],
+					[106.80800222569242, 10.879149128860686, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80801030025481, 10.879143842565734, 105],
+					[106.80799078672906, 10.879113446368002, 105],
+					[106.80799078672906, 10.879113446368002, 106.5],
+					[106.80801030025481, 10.879143842565734, 106.5],
+					[106.80801030025481, 10.879143842565734, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80799078672906, 10.879113446368002, 105],
+					[106.8079827121667, 10.879119393450402, 105],
+					[106.8079827121667, 10.879119393450402, 106.5],
+					[106.80799078672906, 10.879113446368002, 106.5],
+					[106.80799078672906, 10.879113446368002, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80802510361916, 10.879184811349107, 105],
+					[106.80804461714487, 10.879213885966143, 105],
+					[106.80805336458745, 10.879208599672348, 105],
+					[106.80803385106172, 10.879178203481207, 105],
+					[106.80802510361916, 10.879184811349107, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80804461714487, 10.879213885966143, 105],
+					[106.80805336458745, 10.879208599672348, 105],
+					[106.80805336458745, 10.879208599672348, 106.5],
+					[106.80804461714487, 10.879213885966143, 106.5],
+					[106.80804461714487, 10.879213885966143, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80805336458745, 10.879208599672348, 105],
+					[106.80803385106172, 10.879178203481207, 105],
+					[106.80803385106172, 10.879178203481207, 106.5],
+					[106.80805336458745, 10.879208599672348, 106.5],
+					[106.80805336458745, 10.879208599672348, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80803385106172, 10.879178203481207, 105],
+					[106.80802510361916, 10.879184811349107, 105],
+					[106.80802510361916, 10.879184811349107, 106.5],
+					[106.80803385106172, 10.879178203481207, 106.5],
+					[106.80803385106172, 10.879178203481207, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80809301330342, 10.879288413114978, 105],
+					[106.80811312986977, 10.879319362632534, 105],
+					[106.80812117649629, 10.879314753130114, 105],
+					[106.80810173048216, 10.879283803612088, 105],
+					[106.80809301330342, 10.879288413114978, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80811312986977, 10.879319362632534, 105],
+					[106.80812117649629, 10.879314753130114, 105],
+					[106.80812117649629, 10.879314753130114, 106.5],
+					[106.80811312986977, 10.879319362632534, 106.5],
+					[106.80811312986977, 10.879319362632534, 105]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80812117649629, 10.879314753130114, 105],
+					[106.80810173048216, 10.879283803612088, 105],
+					[106.80810173048216, 10.879283803612088, 106.5],
+					[106.80812117649629, 10.879314753130114, 106.5],
+					[106.80812117649629, 10.879314753130114, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80810173048216, 10.879283803612088, 105],
+					[106.80809301330342, 10.879288413114978, 105],
+					[106.80809301330342, 10.879288413114978, 106.5],
+					[106.80810173048216, 10.879283803612088, 106.5],
+					[106.80810173048216, 10.879283803612088, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80813525809802, 10.879353604650998, 105],
+					[106.80815470411214, 10.879385212661983, 105],
+					[106.8081634212909, 10.879379944660373, 105],
+					[106.80814397527675, 10.879348995149114, 105],
+					[106.80813525809802, 10.879353604650998, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80815470411214, 10.879385212661983, 105],
+					[106.8081634212909, 10.879379944660373, 105],
+					[106.8081634212909, 10.879379944660373, 106.5],
+					[106.80815470411214, 10.879385212661983, 106.5],
+					[106.80815470411214, 10.879385212661983, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.8081634212909, 10.879379944660373, 105],
+					[106.80814397527675, 10.879348995149114, 105],
+					[106.80814397527675, 10.879348995149114, 106.5],
+					[106.8081634212909, 10.879379944660373, 106.5],
+					[106.8081634212909, 10.879379944660373, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80814397527675, 10.879348995149114, 105],
+					[106.80813525809802, 10.879353604650998, 105],
+					[106.80813525809802, 10.879353604650998, 106.5],
+					[106.80814397527675, 10.879348995149114, 106.5],
+					[106.80814397527675, 10.879348995149114, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80778187708265, 10.879294339621364, 105],
+					[106.80781339303658, 10.879275901609741, 105],
+					[106.80781875745427, 10.879284462115287, 105],
+					[106.80778925315697, 10.879302900126362, 105],
+					[106.80778187708265, 10.879294339621364, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781339303658, 10.879275901609741, 105],
+					[106.80781875745427, 10.879284462115287, 105],
+					[106.80781875745427, 10.879284462115287, 106.5],
+					[106.80781339303658, 10.879275901609741, 106.5],
+					[106.80781339303658, 10.879275901609741, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781875745427, 10.879284462115287, 105],
+					[106.80778925315697, 10.879302900126362, 105],
+					[106.80778925315697, 10.879302900126362, 106.5],
+					[106.80781875745427, 10.879284462115287, 106.5],
+					[106.80781875745427, 10.879284462115287, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80778925315697, 10.879302900126362, 105],
+					[106.80778187708265, 10.879294339621364, 105],
+					[106.80778187708265, 10.879294339621364, 106.5],
+					[106.80778925315697, 10.879302900126362, 106.5],
+					[106.80778925315697, 10.879302900126362, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80785161451263, 10.879250878592135, 105],
+					[106.80788313046655, 10.879232440577828, 105],
+					[106.80788849488425, 10.879241001084607, 105],
+					[106.80785697893033, 10.87925943909839, 105],
+					[106.80785161451263, 10.879250878592135, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788313046655, 10.879232440577828, 105],
+					[106.80788849488425, 10.879241001084607, 105],
+					[106.80788849488425, 10.879241001084607, 106.5],
+					[106.80788313046655, 10.879232440577828, 106.5],
+					[106.80788313046655, 10.879232440577828, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788849488425, 10.879241001084607, 105],
+					[106.80785697893033, 10.87925943909839, 105],
+					[106.80785697893033, 10.87925943909839, 106.5],
+					[106.80788849488425, 10.879241001084607, 106.5],
+					[106.80788849488425, 10.879241001084607, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80785697893033, 10.87925943909839, 105],
+					[106.80785161451263, 10.879250878592135, 105],
+					[106.80785161451263, 10.879250878592135, 106.5],
+					[106.80785697893033, 10.87925943909839, 106.5],
+					[106.80785697893033, 10.87925943909839, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80794155707892, 10.879249152808113, 105],
+					[106.80796167364527, 10.879281419330605, 105],
+					[106.8079516153621, 10.879286028833521, 105],
+					[106.80793283990018, 10.879255737812992, 105],
+					[106.80794155707892, 10.879249152808113, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80796167364527, 10.879281419330605, 105],
+					[106.8079516153621, 10.879286028833521, 105],
+					[106.8079516153621, 10.879286028833521, 106.5],
+					[106.80796167364527, 10.879281419330605, 106.5],
+					[106.80796167364527, 10.879281419330605, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.8079516153621, 10.879286028833521, 105],
+					[106.80793283990018, 10.879255737812992, 105],
+					[106.80793283990018, 10.879255737812992, 106.5],
+					[106.8079516153621, 10.879286028833521, 106.5],
+					[106.8079516153621, 10.879286028833521, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80793283990018, 10.879255737812992, 105],
+					[106.80794155707892, 10.879249152808113, 105],
+					[106.80794155707892, 10.879249152808113, 106.5],
+					[106.80793283990018, 10.879255737812992, 106.5],
+					[106.80793283990018, 10.879255737812992, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80800861230004, 10.879356488369396, 105],
+					[106.80802805831416, 10.879388096380088, 105],
+					[106.80801867058322, 10.879393364381535, 105],
+					[106.80800056567351, 10.879363073371895, 105],
+					[106.80800861230004, 10.879356488369396, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80802805831416, 10.879388096380088, 105],
+					[106.80801867058322, 10.879393364381535, 105],
+					[106.80801867058322, 10.879393364381535, 106.5],
+					[106.80802805831416, 10.879388096380088, 106.5],
+					[106.80802805831416, 10.879388096380088, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80801867058322, 10.879393364381535, 105],
+					[106.80800056567351, 10.879363073371895, 105],
+					[106.80800056567351, 10.879363073371895, 106.5],
+					[106.80801867058322, 10.879393364381535, 106.5],
+					[106.80801867058322, 10.879393364381535, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80800056567351, 10.879363073371895, 105],
+					[106.80800861230004, 10.879356488369396, 105],
+					[106.80800861230004, 10.879356488369396, 106.5],
+					[106.80800056567351, 10.879363073371895, 106.5],
+					[106.80800056567351, 10.879363073371895, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80805152764157, 10.879426289388512, 105],
+					[106.80807164420791, 10.87945855589183, 105],
+					[106.80806091537254, 10.879461848391974, 105],
+					[106.80804281046284, 10.879431557389294, 105],
+					[106.80805152764157, 10.879426289388512, 105],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80807164420791, 10.87945855589183, 105],
+					[106.80806091537254, 10.879461848391974, 105],
+					[106.80806091537254, 10.879461848391974, 106.5],
+					[106.80807164420791, 10.87945855589183, 106.5],
+					[106.80807164420791, 10.87945855589183, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80806091537254, 10.879461848391974, 105],
+					[106.80804281046284, 10.879431557389294, 105],
+					[106.80804281046284, 10.879431557389294, 106.5],
+					[106.80806091537254, 10.879461848391974, 106.5],
+					[106.80806091537254, 10.879461848391974, 105]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80804281046284, 10.879431557389294, 105],
+					[106.80805152764157, 10.879426289388512, 105],
+					[106.80805152764157, 10.879426289388512, 106.5],
+					[106.80804281046284, 10.879431557389294, 106.5],
+					[106.80804281046284, 10.879431557389294, 105]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			//f2
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80771490575589, 10.87920941829364, 110],
+					[106.80773703397887, 10.87919361427924, 110],
+					[106.80773234011338, 10.879187029273, 110],
+					[106.80770887078599, 10.879199540784748, 110],
+					[106.80771490575589, 10.87920941829364, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773703397887, 10.87919361427924, 110],
+					[106.80773234011338, 10.879187029273, 110],
+					[106.80773234011338, 10.879187029273, 111.5],
+					[106.80773703397887, 10.87919361427924, 111.5],
+					[106.80773703397887, 10.87919361427924, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773234011338, 10.879187029273, 110],
+					[106.80770887078599, 10.879199540784748, 110],
+					[106.80770887078599, 10.879199540784748, 111.5],
+					[106.80773234011338, 10.879187029273, 111.5],
+					[106.80773234011338, 10.879187029273, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80770887078599, 10.879199540784748, 110],
+					[106.80771490575589, 10.87920941829364, 110],
+					[106.80771490575589, 10.87920941829364, 111.5],
+					[106.80770887078599, 10.879199540784748, 111.5],
+					[106.80770887078599, 10.879199540784748, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80777190269386, 10.879171883758085, 110],
+					[106.80780341864778, 10.879152787238189, 110],
+					[106.8077980542301, 10.879144226728865, 110],
+					[106.80776720882838, 10.879163981750002, 110],
+					[106.80777190269386, 10.879171883758085, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80780341864778, 10.879152787238189, 110],
+					[106.8077980542301, 10.879144226728865, 110],
+					[106.8077980542301, 10.879144226728865, 111.5],
+					[106.80780341864778, 10.879152787238189, 111.5],
+					[106.80780341864778, 10.879152787238189, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8077980542301, 10.879144226728865, 110],
+					[106.80776720882838, 10.879163981750002, 110],
+					[106.80776720882838, 10.879163981750002, 111.5],
+					[106.8077980542301, 10.879144226728865, 111.5],
+					[106.8077980542301, 10.879144226728865, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80776720882838, 10.879163981750002, 110],
+					[106.80777190269386, 10.879171883758085, 110],
+					[106.80777190269386, 10.879171883758085, 111.5],
+					[106.80776720882838, 10.879163981750002, 111.5],
+					[106.80776720882838, 10.879163981750002, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80784566343708, 10.879125130207186, 110],
+					[106.80787919104766, 10.879106692185095, 110],
+					[106.80787315607775, 10.87909813167446, 110],
+					[106.8078402990194, 10.879116569697075, 110],
+					[106.80784566343708, 10.879125130207186, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787919104766, 10.879106692185095, 110],
+					[106.80787315607775, 10.87909813167446, 110],
+					[106.80787315607775, 10.87909813167446, 111.5],
+					[106.80787919104766, 10.879106692185095, 111.5],
+					[106.80787919104766, 10.879106692185095, 110]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787315607775, 10.87909813167446, 110],
+					[106.8078402990194, 10.879116569697075, 110],
+					[106.8078402990194, 10.879116569697075, 111.5],
+					[106.80787315607775, 10.87909813167446, 111.5],
+					[106.80787315607775, 10.87909813167446, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8078402990194, 10.879116569697075, 110],
+					[106.80784566343708, 10.879125130207186, 110],
+					[106.80784566343708, 10.879125130207186, 111.5],
+					[106.8078402990194, 10.879116569697075, 111.5],
+					[106.8078402990194, 10.879116569697075, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.8079827121667, 10.879119393450402, 110],
+					[106.80800222569242, 10.879149128860686, 110],
+					[106.80801030025481, 10.879143842565734, 110],
+					[106.80799078672906, 10.879113446368002, 110],
+					[106.8079827121667, 10.879119393450402, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80800222569242, 10.879149128860686, 110],
+					[106.80801030025481, 10.879143842565734, 110],
+					[106.80801030025481, 10.879143842565734, 111.5],
+					[106.80800222569242, 10.879149128860686, 111.5],
+					[106.80800222569242, 10.879149128860686, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80801030025481, 10.879143842565734, 110],
+					[106.80799078672906, 10.879113446368002, 110],
+					[106.80799078672906, 10.879113446368002, 111.5],
+					[106.80801030025481, 10.879143842565734, 111.5],
+					[106.80801030025481, 10.879143842565734, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80799078672906, 10.879113446368002, 110],
+					[106.8079827121667, 10.879119393450402, 110],
+					[106.8079827121667, 10.879119393450402, 111.5],
+					[106.80799078672906, 10.879113446368002, 111.5],
+					[106.80799078672906, 10.879113446368002, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80802510361916, 10.879184811349107, 110],
+					[106.80804461714487, 10.879213885966143, 110],
+					[106.80805336458745, 10.879208599672348, 110],
+					[106.80803385106172, 10.879178203481207, 110],
+					[106.80802510361916, 10.879184811349107, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80804461714487, 10.879213885966143, 110],
+					[106.80805336458745, 10.879208599672348, 110],
+					[106.80805336458745, 10.879208599672348, 111.5],
+					[106.80804461714487, 10.879213885966143, 111.5],
+					[106.80804461714487, 10.879213885966143, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80805336458745, 10.879208599672348, 110],
+					[106.80803385106172, 10.879178203481207, 110],
+					[106.80803385106172, 10.879178203481207, 111.5],
+					[106.80805336458745, 10.879208599672348, 111.5],
+					[106.80805336458745, 10.879208599672348, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80803385106172, 10.879178203481207, 110],
+					[106.80802510361916, 10.879184811349107, 110],
+					[106.80802510361916, 10.879184811349107, 111.5],
+					[106.80803385106172, 10.879178203481207, 111.5],
+					[106.80803385106172, 10.879178203481207, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80809301330342, 10.879288413114978, 110],
+					[106.80811312986977, 10.879319362632534, 110],
+					[106.80812117649629, 10.879314753130114, 110],
+					[106.80810173048216, 10.879283803612088, 110],
+					[106.80809301330342, 10.879288413114978, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80811312986977, 10.879319362632534, 110],
+					[106.80812117649629, 10.879314753130114, 110],
+					[106.80812117649629, 10.879314753130114, 111.5],
+					[106.80811312986977, 10.879319362632534, 111.5],
+					[106.80811312986977, 10.879319362632534, 110]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80812117649629, 10.879314753130114, 110],
+					[106.80810173048216, 10.879283803612088, 110],
+					[106.80810173048216, 10.879283803612088, 111.5],
+					[106.80812117649629, 10.879314753130114, 111.5],
+					[106.80812117649629, 10.879314753130114, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80810173048216, 10.879283803612088, 110],
+					[106.80809301330342, 10.879288413114978, 110],
+					[106.80809301330342, 10.879288413114978, 111.5],
+					[106.80810173048216, 10.879283803612088, 111.5],
+					[106.80810173048216, 10.879283803612088, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80813525809802, 10.879353604650998, 110],
+					[106.80815470411214, 10.879385212661983, 110],
+					[106.8081634212909, 10.879379944660373, 110],
+					[106.80814397527675, 10.879348995149114, 110],
+					[106.80813525809802, 10.879353604650998, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80815470411214, 10.879385212661983, 110],
+					[106.8081634212909, 10.879379944660373, 110],
+					[106.8081634212909, 10.879379944660373, 111.5],
+					[106.80815470411214, 10.879385212661983, 111.5],
+					[106.80815470411214, 10.879385212661983, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.8081634212909, 10.879379944660373, 110],
+					[106.80814397527675, 10.879348995149114, 110],
+					[106.80814397527675, 10.879348995149114, 111.5],
+					[106.8081634212909, 10.879379944660373, 111.5],
+					[106.8081634212909, 10.879379944660373, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80814397527675, 10.879348995149114, 110],
+					[106.80813525809802, 10.879353604650998, 110],
+					[106.80813525809802, 10.879353604650998, 111.5],
+					[106.80814397527675, 10.879348995149114, 111.5],
+					[106.80814397527675, 10.879348995149114, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80778187708265, 10.879294339621364, 110],
+					[106.80781339303658, 10.879275901609741, 110],
+					[106.80781875745427, 10.879284462115287, 110],
+					[106.80778925315697, 10.879302900126362, 110],
+					[106.80778187708265, 10.879294339621364, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781339303658, 10.879275901609741, 110],
+					[106.80781875745427, 10.879284462115287, 110],
+					[106.80781875745427, 10.879284462115287, 111.5],
+					[106.80781339303658, 10.879275901609741, 111.5],
+					[106.80781339303658, 10.879275901609741, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781875745427, 10.879284462115287, 110],
+					[106.80778925315697, 10.879302900126362, 110],
+					[106.80778925315697, 10.879302900126362, 111.5],
+					[106.80781875745427, 10.879284462115287, 111.5],
+					[106.80781875745427, 10.879284462115287, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80778925315697, 10.879302900126362, 110],
+					[106.80778187708265, 10.879294339621364, 110],
+					[106.80778187708265, 10.879294339621364, 111.5],
+					[106.80778925315697, 10.879302900126362, 111.5],
+					[106.80778925315697, 10.879302900126362, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80785161451263, 10.879250878592135, 110],
+					[106.80788313046655, 10.879232440577828, 110],
+					[106.80788849488425, 10.879241001084607, 110],
+					[106.80785697893033, 10.87925943909839, 110],
+					[106.80785161451263, 10.879250878592135, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788313046655, 10.879232440577828, 110],
+					[106.80788849488425, 10.879241001084607, 110],
+					[106.80788849488425, 10.879241001084607, 111.5],
+					[106.80788313046655, 10.879232440577828, 111.5],
+					[106.80788313046655, 10.879232440577828, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788849488425, 10.879241001084607, 110],
+					[106.80785697893033, 10.87925943909839, 110],
+					[106.80785697893033, 10.87925943909839, 111.5],
+					[106.80788849488425, 10.879241001084607, 111.5],
+					[106.80788849488425, 10.879241001084607, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80785697893033, 10.87925943909839, 110],
+					[106.80785161451263, 10.879250878592135, 110],
+					[106.80785161451263, 10.879250878592135, 111.5],
+					[106.80785697893033, 10.87925943909839, 111.5],
+					[106.80785697893033, 10.87925943909839, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80794155707892, 10.879249152808113, 110],
+					[106.80796167364527, 10.879281419330605, 110],
+					[106.8079516153621, 10.879286028833521, 110],
+					[106.80793283990018, 10.879255737812992, 110],
+					[106.80794155707892, 10.879249152808113, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80796167364527, 10.879281419330605, 110],
+					[106.8079516153621, 10.879286028833521, 110],
+					[106.8079516153621, 10.879286028833521, 111.5],
+					[106.80796167364527, 10.879281419330605, 111.5],
+					[106.80796167364527, 10.879281419330605, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.8079516153621, 10.879286028833521, 110],
+					[106.80793283990018, 10.879255737812992, 110],
+					[106.80793283990018, 10.879255737812992, 111.5],
+					[106.8079516153621, 10.879286028833521, 111.5],
+					[106.8079516153621, 10.879286028833521, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80793283990018, 10.879255737812992, 110],
+					[106.80794155707892, 10.879249152808113, 110],
+					[106.80794155707892, 10.879249152808113, 111.5],
+					[106.80793283990018, 10.879255737812992, 111.5],
+					[106.80793283990018, 10.879255737812992, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80800861230004, 10.879356488369396, 110],
+					[106.80802805831416, 10.879388096380088, 110],
+					[106.80801867058322, 10.879393364381535, 110],
+					[106.80800056567351, 10.879363073371895, 110],
+					[106.80800861230004, 10.879356488369396, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80802805831416, 10.879388096380088, 110],
+					[106.80801867058322, 10.879393364381535, 110],
+					[106.80801867058322, 10.879393364381535, 111.5],
+					[106.80802805831416, 10.879388096380088, 111.5],
+					[106.80802805831416, 10.879388096380088, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80801867058322, 10.879393364381535, 110],
+					[106.80800056567351, 10.879363073371895, 110],
+					[106.80800056567351, 10.879363073371895, 111.5],
+					[106.80801867058322, 10.879393364381535, 111.5],
+					[106.80801867058322, 10.879393364381535, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80800056567351, 10.879363073371895, 110],
+					[106.80800861230004, 10.879356488369396, 110],
+					[106.80800861230004, 10.879356488369396, 111.5],
+					[106.80800056567351, 10.879363073371895, 111.5],
+					[106.80800056567351, 10.879363073371895, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80805152764157, 10.879426289388512, 110],
+					[106.80807164420791, 10.87945855589183, 110],
+					[106.80806091537254, 10.879461848391974, 110],
+					[106.80804281046284, 10.879431557389294, 110],
+					[106.80805152764157, 10.879426289388512, 110],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80807164420791, 10.87945855589183, 110],
+					[106.80806091537254, 10.879461848391974, 110],
+					[106.80806091537254, 10.879461848391974, 111.5],
+					[106.80807164420791, 10.87945855589183, 111.5],
+					[106.80807164420791, 10.87945855589183, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80806091537254, 10.879461848391974, 110],
+					[106.80804281046284, 10.879431557389294, 110],
+					[106.80804281046284, 10.879431557389294, 111.5],
+					[106.80806091537254, 10.879461848391974, 111.5],
+					[106.80806091537254, 10.879461848391974, 110]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80804281046284, 10.879431557389294, 110],
+					[106.80805152764157, 10.879426289388512, 110],
+					[106.80805152764157, 10.879426289388512, 111.5],
+					[106.80804281046284, 10.879431557389294, 111.5],
+					[106.80804281046284, 10.879431557389294, 110]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			//f3
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80771490575589, 10.87920941829364, 115],
+					[106.80773703397887, 10.87919361427924, 115],
+					[106.80773234011338, 10.879187029273, 115],
+					[106.80770887078599, 10.879199540784748, 115],
+					[106.80771490575589, 10.87920941829364, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773703397887, 10.87919361427924, 115],
+					[106.80773234011338, 10.879187029273, 115],
+					[106.80773234011338, 10.879187029273, 116.5],
+					[106.80773703397887, 10.87919361427924, 116.5],
+					[106.80773703397887, 10.87919361427924, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773234011338, 10.879187029273, 115],
+					[106.80770887078599, 10.879199540784748, 115],
+					[106.80770887078599, 10.879199540784748, 116.5],
+					[106.80773234011338, 10.879187029273, 116.5],
+					[106.80773234011338, 10.879187029273, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80770887078599, 10.879199540784748, 115],
+					[106.80771490575589, 10.87920941829364, 115],
+					[106.80771490575589, 10.87920941829364, 116.5],
+					[106.80770887078599, 10.879199540784748, 116.5],
+					[106.80770887078599, 10.879199540784748, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80777190269386, 10.879171883758085, 115],
+					[106.80780341864778, 10.879152787238189, 115],
+					[106.8077980542301, 10.879144226728865, 115],
+					[106.80776720882838, 10.879163981750002, 115],
+					[106.80777190269386, 10.879171883758085, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80780341864778, 10.879152787238189, 115],
+					[106.8077980542301, 10.879144226728865, 115],
+					[106.8077980542301, 10.879144226728865, 116.5],
+					[106.80780341864778, 10.879152787238189, 116.5],
+					[106.80780341864778, 10.879152787238189, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8077980542301, 10.879144226728865, 115],
+					[106.80776720882838, 10.879163981750002, 115],
+					[106.80776720882838, 10.879163981750002, 116.5],
+					[106.8077980542301, 10.879144226728865, 116.5],
+					[106.8077980542301, 10.879144226728865, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80776720882838, 10.879163981750002, 115],
+					[106.80777190269386, 10.879171883758085, 115],
+					[106.80777190269386, 10.879171883758085, 116.5],
+					[106.80776720882838, 10.879163981750002, 116.5],
+					[106.80776720882838, 10.879163981750002, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80784566343708, 10.879125130207186, 115],
+					[106.80787919104766, 10.879106692185095, 115],
+					[106.80787315607775, 10.87909813167446, 115],
+					[106.8078402990194, 10.879116569697075, 115],
+					[106.80784566343708, 10.879125130207186, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787919104766, 10.879106692185095, 115],
+					[106.80787315607775, 10.87909813167446, 115],
+					[106.80787315607775, 10.87909813167446, 116.5],
+					[106.80787919104766, 10.879106692185095, 116.5],
+					[106.80787919104766, 10.879106692185095, 115]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787315607775, 10.87909813167446, 115],
+					[106.8078402990194, 10.879116569697075, 115],
+					[106.8078402990194, 10.879116569697075, 116.5],
+					[106.80787315607775, 10.87909813167446, 116.5],
+					[106.80787315607775, 10.87909813167446, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8078402990194, 10.879116569697075, 115],
+					[106.80784566343708, 10.879125130207186, 115],
+					[106.80784566343708, 10.879125130207186, 116.5],
+					[106.8078402990194, 10.879116569697075, 116.5],
+					[106.8078402990194, 10.879116569697075, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.8079827121667, 10.879119393450402, 115],
+					[106.80800222569242, 10.879149128860686, 115],
+					[106.80801030025481, 10.879143842565734, 115],
+					[106.80799078672906, 10.879113446368002, 115],
+					[106.8079827121667, 10.879119393450402, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80800222569242, 10.879149128860686, 115],
+					[106.80801030025481, 10.879143842565734, 115],
+					[106.80801030025481, 10.879143842565734, 116.5],
+					[106.80800222569242, 10.879149128860686, 116.5],
+					[106.80800222569242, 10.879149128860686, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80801030025481, 10.879143842565734, 115],
+					[106.80799078672906, 10.879113446368002, 115],
+					[106.80799078672906, 10.879113446368002, 116.5],
+					[106.80801030025481, 10.879143842565734, 116.5],
+					[106.80801030025481, 10.879143842565734, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80799078672906, 10.879113446368002, 115],
+					[106.8079827121667, 10.879119393450402, 115],
+					[106.8079827121667, 10.879119393450402, 116.5],
+					[106.80799078672906, 10.879113446368002, 116.5],
+					[106.80799078672906, 10.879113446368002, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80802510361916, 10.879184811349107, 115],
+					[106.80804461714487, 10.879213885966143, 115],
+					[106.80805336458745, 10.879208599672348, 115],
+					[106.80803385106172, 10.879178203481207, 115],
+					[106.80802510361916, 10.879184811349107, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80804461714487, 10.879213885966143, 115],
+					[106.80805336458745, 10.879208599672348, 115],
+					[106.80805336458745, 10.879208599672348, 116.5],
+					[106.80804461714487, 10.879213885966143, 116.5],
+					[106.80804461714487, 10.879213885966143, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80805336458745, 10.879208599672348, 115],
+					[106.80803385106172, 10.879178203481207, 115],
+					[106.80803385106172, 10.879178203481207, 116.5],
+					[106.80805336458745, 10.879208599672348, 116.5],
+					[106.80805336458745, 10.879208599672348, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80803385106172, 10.879178203481207, 115],
+					[106.80802510361916, 10.879184811349107, 115],
+					[106.80802510361916, 10.879184811349107, 116.5],
+					[106.80803385106172, 10.879178203481207, 116.5],
+					[106.80803385106172, 10.879178203481207, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80809301330342, 10.879288413114978, 115],
+					[106.80811312986977, 10.879319362632534, 115],
+					[106.80812117649629, 10.879314753130114, 115],
+					[106.80810173048216, 10.879283803612088, 115],
+					[106.80809301330342, 10.879288413114978, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80811312986977, 10.879319362632534, 115],
+					[106.80812117649629, 10.879314753130114, 115],
+					[106.80812117649629, 10.879314753130114, 116.5],
+					[106.80811312986977, 10.879319362632534, 116.5],
+					[106.80811312986977, 10.879319362632534, 115]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80812117649629, 10.879314753130114, 115],
+					[106.80810173048216, 10.879283803612088, 115],
+					[106.80810173048216, 10.879283803612088, 116.5],
+					[106.80812117649629, 10.879314753130114, 116.5],
+					[106.80812117649629, 10.879314753130114, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80810173048216, 10.879283803612088, 115],
+					[106.80809301330342, 10.879288413114978, 115],
+					[106.80809301330342, 10.879288413114978, 116.5],
+					[106.80810173048216, 10.879283803612088, 116.5],
+					[106.80810173048216, 10.879283803612088, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80813525809802, 10.879353604650998, 115],
+					[106.80815470411214, 10.879385212661983, 115],
+					[106.8081634212909, 10.879379944660373, 115],
+					[106.80814397527675, 10.879348995149114, 115],
+					[106.80813525809802, 10.879353604650998, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80815470411214, 10.879385212661983, 115],
+					[106.8081634212909, 10.879379944660373, 115],
+					[106.8081634212909, 10.879379944660373, 116.5],
+					[106.80815470411214, 10.879385212661983, 116.5],
+					[106.80815470411214, 10.879385212661983, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.8081634212909, 10.879379944660373, 115],
+					[106.80814397527675, 10.879348995149114, 115],
+					[106.80814397527675, 10.879348995149114, 116.5],
+					[106.8081634212909, 10.879379944660373, 116.5],
+					[106.8081634212909, 10.879379944660373, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80814397527675, 10.879348995149114, 115],
+					[106.80813525809802, 10.879353604650998, 115],
+					[106.80813525809802, 10.879353604650998, 116.5],
+					[106.80814397527675, 10.879348995149114, 116.5],
+					[106.80814397527675, 10.879348995149114, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80778187708265, 10.879294339621364, 115],
+					[106.80781339303658, 10.879275901609741, 115],
+					[106.80781875745427, 10.879284462115287, 115],
+					[106.80778925315697, 10.879302900126362, 115],
+					[106.80778187708265, 10.879294339621364, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781339303658, 10.879275901609741, 115],
+					[106.80781875745427, 10.879284462115287, 115],
+					[106.80781875745427, 10.879284462115287, 116.5],
+					[106.80781339303658, 10.879275901609741, 116.5],
+					[106.80781339303658, 10.879275901609741, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781875745427, 10.879284462115287, 115],
+					[106.80778925315697, 10.879302900126362, 115],
+					[106.80778925315697, 10.879302900126362, 116.5],
+					[106.80781875745427, 10.879284462115287, 116.5],
+					[106.80781875745427, 10.879284462115287, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80778925315697, 10.879302900126362, 115],
+					[106.80778187708265, 10.879294339621364, 115],
+					[106.80778187708265, 10.879294339621364, 116.5],
+					[106.80778925315697, 10.879302900126362, 116.5],
+					[106.80778925315697, 10.879302900126362, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80785161451263, 10.879250878592135, 115],
+					[106.80788313046655, 10.879232440577828, 115],
+					[106.80788849488425, 10.879241001084607, 115],
+					[106.80785697893033, 10.87925943909839, 115],
+					[106.80785161451263, 10.879250878592135, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788313046655, 10.879232440577828, 115],
+					[106.80788849488425, 10.879241001084607, 115],
+					[106.80788849488425, 10.879241001084607, 116.5],
+					[106.80788313046655, 10.879232440577828, 116.5],
+					[106.80788313046655, 10.879232440577828, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788849488425, 10.879241001084607, 115],
+					[106.80785697893033, 10.87925943909839, 115],
+					[106.80785697893033, 10.87925943909839, 116.5],
+					[106.80788849488425, 10.879241001084607, 116.5],
+					[106.80788849488425, 10.879241001084607, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80785697893033, 10.87925943909839, 115],
+					[106.80785161451263, 10.879250878592135, 115],
+					[106.80785161451263, 10.879250878592135, 116.5],
+					[106.80785697893033, 10.87925943909839, 116.5],
+					[106.80785697893033, 10.87925943909839, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80794155707892, 10.879249152808113, 115],
+					[106.80796167364527, 10.879281419330605, 115],
+					[106.8079516153621, 10.879286028833521, 115],
+					[106.80793283990018, 10.879255737812992, 115],
+					[106.80794155707892, 10.879249152808113, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80796167364527, 10.879281419330605, 115],
+					[106.8079516153621, 10.879286028833521, 115],
+					[106.8079516153621, 10.879286028833521, 116.5],
+					[106.80796167364527, 10.879281419330605, 116.5],
+					[106.80796167364527, 10.879281419330605, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.8079516153621, 10.879286028833521, 115],
+					[106.80793283990018, 10.879255737812992, 115],
+					[106.80793283990018, 10.879255737812992, 116.5],
+					[106.8079516153621, 10.879286028833521, 116.5],
+					[106.8079516153621, 10.879286028833521, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80793283990018, 10.879255737812992, 115],
+					[106.80794155707892, 10.879249152808113, 115],
+					[106.80794155707892, 10.879249152808113, 116.5],
+					[106.80793283990018, 10.879255737812992, 116.5],
+					[106.80793283990018, 10.879255737812992, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80800861230004, 10.879356488369396, 115],
+					[106.80802805831416, 10.879388096380088, 115],
+					[106.80801867058322, 10.879393364381535, 115],
+					[106.80800056567351, 10.879363073371895, 115],
+					[106.80800861230004, 10.879356488369396, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80802805831416, 10.879388096380088, 115],
+					[106.80801867058322, 10.879393364381535, 115],
+					[106.80801867058322, 10.879393364381535, 116.5],
+					[106.80802805831416, 10.879388096380088, 116.5],
+					[106.80802805831416, 10.879388096380088, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80801867058322, 10.879393364381535, 115],
+					[106.80800056567351, 10.879363073371895, 115],
+					[106.80800056567351, 10.879363073371895, 116.5],
+					[106.80801867058322, 10.879393364381535, 116.5],
+					[106.80801867058322, 10.879393364381535, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80800056567351, 10.879363073371895, 115],
+					[106.80800861230004, 10.879356488369396, 115],
+					[106.80800861230004, 10.879356488369396, 116.5],
+					[106.80800056567351, 10.879363073371895, 116.5],
+					[106.80800056567351, 10.879363073371895, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80805152764157, 10.879426289388512, 115],
+					[106.80807164420791, 10.87945855589183, 115],
+					[106.80806091537254, 10.879461848391974, 115],
+					[106.80804281046284, 10.879431557389294, 115],
+					[106.80805152764157, 10.879426289388512, 115],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80807164420791, 10.87945855589183, 115],
+					[106.80806091537254, 10.879461848391974, 115],
+					[106.80806091537254, 10.879461848391974, 116.5],
+					[106.80807164420791, 10.87945855589183, 116.5],
+					[106.80807164420791, 10.87945855589183, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80806091537254, 10.879461848391974, 115],
+					[106.80804281046284, 10.879431557389294, 115],
+					[106.80804281046284, 10.879431557389294, 116.5],
+					[106.80806091537254, 10.879461848391974, 116.5],
+					[106.80806091537254, 10.879461848391974, 115]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80804281046284, 10.879431557389294, 115],
+					[106.80805152764157, 10.879426289388512, 115],
+					[106.80805152764157, 10.879426289388512, 116.5],
+					[106.80804281046284, 10.879431557389294, 116.5],
+					[106.80804281046284, 10.879431557389294, 115]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			//f4
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80771490575589, 10.87920941829364, 120],
+					[106.80773703397887, 10.87919361427924, 120],
+					[106.80773234011338, 10.879187029273, 120],
+					[106.80770887078599, 10.879199540784748, 120],
+					[106.80771490575589, 10.87920941829364, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773703397887, 10.87919361427924, 120],
+					[106.80773234011338, 10.879187029273, 120],
+					[106.80773234011338, 10.879187029273, 121.5],
+					[106.80773703397887, 10.87919361427924, 121.5],
+					[106.80773703397887, 10.87919361427924, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80773234011338, 10.879187029273, 120],
+					[106.80770887078599, 10.879199540784748, 120],
+					[106.80770887078599, 10.879199540784748, 121.5],
+					[106.80773234011338, 10.879187029273, 121.5],
+					[106.80773234011338, 10.879187029273, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80770887078599, 10.879199540784748, 120],
+					[106.80771490575589, 10.87920941829364, 120],
+					[106.80771490575589, 10.87920941829364, 121.5],
+					[106.80770887078599, 10.879199540784748, 121.5],
+					[106.80770887078599, 10.879199540784748, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80777190269386, 10.879171883758085, 120],
+					[106.80780341864778, 10.879152787238189, 120],
+					[106.8077980542301, 10.879144226728865, 120],
+					[106.80776720882838, 10.879163981750002, 120],
+					[106.80777190269386, 10.879171883758085, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80780341864778, 10.879152787238189, 120],
+					[106.8077980542301, 10.879144226728865, 120],
+					[106.8077980542301, 10.879144226728865, 121.5],
+					[106.80780341864778, 10.879152787238189, 121.5],
+					[106.80780341864778, 10.879152787238189, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8077980542301, 10.879144226728865, 120],
+					[106.80776720882838, 10.879163981750002, 120],
+					[106.80776720882838, 10.879163981750002, 121.5],
+					[106.8077980542301, 10.879144226728865, 121.5],
+					[106.8077980542301, 10.879144226728865, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80776720882838, 10.879163981750002, 120],
+					[106.80777190269386, 10.879171883758085, 120],
+					[106.80777190269386, 10.879171883758085, 121.5],
+					[106.80776720882838, 10.879163981750002, 121.5],
+					[106.80776720882838, 10.879163981750002, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1
+				type: "polygon",
+				rings: [
+					[106.80784566343708, 10.879125130207186, 120],
+					[106.80787919104766, 10.879106692185095, 120],
+					[106.80787315607775, 10.87909813167446, 120],
+					[106.8078402990194, 10.879116569697075, 120],
+					[106.80784566343708, 10.879125130207186, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787919104766, 10.879106692185095, 120],
+					[106.80787315607775, 10.87909813167446, 120],
+					[106.80787315607775, 10.87909813167446, 121.5],
+					[106.80787919104766, 10.879106692185095, 121.5],
+					[106.80787919104766, 10.879106692185095, 120]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.80787315607775, 10.87909813167446, 120],
+					[106.8078402990194, 10.879116569697075, 120],
+					[106.8078402990194, 10.879116569697075, 121.5],
+					[106.80787315607775, 10.87909813167446, 121.5],
+					[106.80787315607775, 10.87909813167446, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol1 side
+				type: "polygon",
+				rings: [
+					[106.8078402990194, 10.879116569697075, 120],
+					[106.80784566343708, 10.879125130207186, 120],
+					[106.80784566343708, 10.879125130207186, 121.5],
+					[106.8078402990194, 10.879116569697075, 121.5],
+					[106.8078402990194, 10.879116569697075, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.8079827121667, 10.879119393450402, 120],
+					[106.80800222569242, 10.879149128860686, 120],
+					[106.80801030025481, 10.879143842565734, 120],
+					[106.80799078672906, 10.879113446368002, 120],
+					[106.8079827121667, 10.879119393450402, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80800222569242, 10.879149128860686, 120],
+					[106.80801030025481, 10.879143842565734, 120],
+					[106.80801030025481, 10.879143842565734, 121.5],
+					[106.80800222569242, 10.879149128860686, 121.5],
+					[106.80800222569242, 10.879149128860686, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80801030025481, 10.879143842565734, 120],
+					[106.80799078672906, 10.879113446368002, 120],
+					[106.80799078672906, 10.879113446368002, 121.5],
+					[106.80801030025481, 10.879143842565734, 121.5],
+					[106.80801030025481, 10.879143842565734, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80799078672906, 10.879113446368002, 120],
+					[106.8079827121667, 10.879119393450402, 120],
+					[106.8079827121667, 10.879119393450402, 121.5],
+					[106.80799078672906, 10.879113446368002, 121.5],
+					[106.80799078672906, 10.879113446368002, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80802510361916, 10.879184811349107, 120],
+					[106.80804461714487, 10.879213885966143, 120],
+					[106.80805336458745, 10.879208599672348, 120],
+					[106.80803385106172, 10.879178203481207, 120],
+					[106.80802510361916, 10.879184811349107, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80804461714487, 10.879213885966143, 120],
+					[106.80805336458745, 10.879208599672348, 120],
+					[106.80805336458745, 10.879208599672348, 121.5],
+					[106.80804461714487, 10.879213885966143, 121.5],
+					[106.80804461714487, 10.879213885966143, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80805336458745, 10.879208599672348, 120],
+					[106.80803385106172, 10.879178203481207, 120],
+					[106.80803385106172, 10.879178203481207, 121.5],
+					[106.80805336458745, 10.879208599672348, 121.5],
+					[106.80805336458745, 10.879208599672348, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80803385106172, 10.879178203481207, 120],
+					[106.80802510361916, 10.879184811349107, 120],
+					[106.80802510361916, 10.879184811349107, 121.5],
+					[106.80803385106172, 10.879178203481207, 121.5],
+					[106.80803385106172, 10.879178203481207, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80809301330342, 10.879288413114978, 120],
+					[106.80811312986977, 10.879319362632534, 120],
+					[106.80812117649629, 10.879314753130114, 120],
+					[106.80810173048216, 10.879283803612088, 120],
+					[106.80809301330342, 10.879288413114978, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80811312986977, 10.879319362632534, 120],
+					[106.80812117649629, 10.879314753130114, 120],
+					[106.80812117649629, 10.879314753130114, 121.5],
+					[106.80811312986977, 10.879319362632534, 121.5],
+					[106.80811312986977, 10.879319362632534, 120]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80812117649629, 10.879314753130114, 120],
+					[106.80810173048216, 10.879283803612088, 120],
+					[106.80810173048216, 10.879283803612088, 121.5],
+					[106.80812117649629, 10.879314753130114, 121.5],
+					[106.80812117649629, 10.879314753130114, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80810173048216, 10.879283803612088, 120],
+					[106.80809301330342, 10.879288413114978, 120],
+					[106.80809301330342, 10.879288413114978, 121.5],
+					[106.80810173048216, 10.879283803612088, 121.5],
+					[106.80810173048216, 10.879283803612088, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2
+				type: "polygon",
+				rings: [
+					[106.80813525809802, 10.879353604650998, 120],
+					[106.80815470411214, 10.879385212661983, 120],
+					[106.8081634212909, 10.879379944660373, 120],
+					[106.80814397527675, 10.879348995149114, 120],
+					[106.80813525809802, 10.879353604650998, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80815470411214, 10.879385212661983, 120],
+					[106.8081634212909, 10.879379944660373, 120],
+					[106.8081634212909, 10.879379944660373, 121.5],
+					[106.80815470411214, 10.879385212661983, 121.5],
+					[106.80815470411214, 10.879385212661983, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.8081634212909, 10.879379944660373, 120],
+					[106.80814397527675, 10.879348995149114, 120],
+					[106.80814397527675, 10.879348995149114, 121.5],
+					[106.8081634212909, 10.879379944660373, 121.5],
+					[106.8081634212909, 10.879379944660373, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol2 side
+				type: "polygon",
+				rings: [
+					[106.80814397527675, 10.879348995149114, 120],
+					[106.80813525809802, 10.879353604650998, 120],
+					[106.80813525809802, 10.879353604650998, 121.5],
+					[106.80814397527675, 10.879348995149114, 121.5],
+					[106.80814397527675, 10.879348995149114, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80778187708265, 10.879294339621364, 120],
+					[106.80781339303658, 10.879275901609741, 120],
+					[106.80781875745427, 10.879284462115287, 120],
+					[106.80778925315697, 10.879302900126362, 120],
+					[106.80778187708265, 10.879294339621364, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781339303658, 10.879275901609741, 120],
+					[106.80781875745427, 10.879284462115287, 120],
+					[106.80781875745427, 10.879284462115287, 121.5],
+					[106.80781339303658, 10.879275901609741, 121.5],
+					[106.80781339303658, 10.879275901609741, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80781875745427, 10.879284462115287, 120],
+					[106.80778925315697, 10.879302900126362, 120],
+					[106.80778925315697, 10.879302900126362, 121.5],
+					[106.80781875745427, 10.879284462115287, 121.5],
+					[106.80781875745427, 10.879284462115287, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80778925315697, 10.879302900126362, 120],
+					[106.80778187708265, 10.879294339621364, 120],
+					[106.80778187708265, 10.879294339621364, 121.5],
+					[106.80778925315697, 10.879302900126362, 121.5],
+					[106.80778925315697, 10.879302900126362, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3
+				type: "polygon",
+				rings: [
+					[106.80785161451263, 10.879250878592135, 120],
+					[106.80788313046655, 10.879232440577828, 120],
+					[106.80788849488425, 10.879241001084607, 120],
+					[106.80785697893033, 10.87925943909839, 120],
+					[106.80785161451263, 10.879250878592135, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788313046655, 10.879232440577828, 120],
+					[106.80788849488425, 10.879241001084607, 120],
+					[106.80788849488425, 10.879241001084607, 121.5],
+					[106.80788313046655, 10.879232440577828, 121.5],
+					[106.80788313046655, 10.879232440577828, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80788849488425, 10.879241001084607, 120],
+					[106.80785697893033, 10.87925943909839, 120],
+					[106.80785697893033, 10.87925943909839, 121.5],
+					[106.80788849488425, 10.879241001084607, 121.5],
+					[106.80788849488425, 10.879241001084607, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol3 side
+				type: "polygon",
+				rings: [
+					[106.80785697893033, 10.87925943909839, 120],
+					[106.80785161451263, 10.879250878592135, 120],
+					[106.80785161451263, 10.879250878592135, 121.5],
+					[106.80785697893033, 10.87925943909839, 121.5],
+					[106.80785697893033, 10.87925943909839, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80794155707892, 10.879249152808113, 120],
+					[106.80796167364527, 10.879281419330605, 120],
+					[106.8079516153621, 10.879286028833521, 120],
+					[106.80793283990018, 10.879255737812992, 120],
+					[106.80794155707892, 10.879249152808113, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80796167364527, 10.879281419330605, 120],
+					[106.8079516153621, 10.879286028833521, 120],
+					[106.8079516153621, 10.879286028833521, 121.5],
+					[106.80796167364527, 10.879281419330605, 121.5],
+					[106.80796167364527, 10.879281419330605, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.8079516153621, 10.879286028833521, 120],
+					[106.80793283990018, 10.879255737812992, 120],
+					[106.80793283990018, 10.879255737812992, 121.5],
+					[106.8079516153621, 10.879286028833521, 121.5],
+					[106.8079516153621, 10.879286028833521, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80793283990018, 10.879255737812992, 120],
+					[106.80794155707892, 10.879249152808113, 120],
+					[106.80794155707892, 10.879249152808113, 121.5],
+					[106.80793283990018, 10.879255737812992, 121.5],
+					[106.80793283990018, 10.879255737812992, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80800861230004, 10.879356488369396, 120],
+					[106.80802805831416, 10.879388096380088, 120],
+					[106.80801867058322, 10.879393364381535, 120],
+					[106.80800056567351, 10.879363073371895, 120],
+					[106.80800861230004, 10.879356488369396, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80802805831416, 10.879388096380088, 120],
+					[106.80801867058322, 10.879393364381535, 120],
+					[106.80801867058322, 10.879393364381535, 121.5],
+					[106.80802805831416, 10.879388096380088, 121.5],
+					[106.80802805831416, 10.879388096380088, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80801867058322, 10.879393364381535, 120],
+					[106.80800056567351, 10.879363073371895, 120],
+					[106.80800056567351, 10.879363073371895, 121.5],
+					[106.80801867058322, 10.879393364381535, 121.5],
+					[106.80801867058322, 10.879393364381535, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80800056567351, 10.879363073371895, 120],
+					[106.80800861230004, 10.879356488369396, 120],
+					[106.80800861230004, 10.879356488369396, 121.5],
+					[106.80800056567351, 10.879363073371895, 121.5],
+					[106.80800056567351, 10.879363073371895, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+
+			{//bancol4
+				type: "polygon",
+				rings: [
+					[106.80805152764157, 10.879426289388512, 120],
+					[106.80807164420791, 10.87945855589183, 120],
+					[106.80806091537254, 10.879461848391974, 120],
+					[106.80804281046284, 10.879431557389294, 120],
+					[106.80805152764157, 10.879426289388512, 120],
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80807164420791, 10.87945855589183, 120],
+					[106.80806091537254, 10.879461848391974, 120],
+					[106.80806091537254, 10.879461848391974, 121.5],
+					[106.80807164420791, 10.87945855589183, 121.5],
+					[106.80807164420791, 10.87945855589183, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80806091537254, 10.879461848391974, 120],
+					[106.80804281046284, 10.879431557389294, 120],
+					[106.80804281046284, 10.879431557389294, 121.5],
+					[106.80806091537254, 10.879461848391974, 121.5],
+					[106.80806091537254, 10.879461848391974, 120]
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},
+			{//bancol4 side
+				type: "polygon",
+				rings: [
+					[106.80804281046284, 10.879431557389294, 120],
+					[106.80805152764157, 10.879426289388512, 120],
+					[106.80805152764157, 10.879426289388512, 121.5],
+					[106.80804281046284, 10.879431557389294, 121.5],
+					[106.80804281046284, 10.879431557389294, 120]
+					
+				],
+				symbol: {
+					type: "simple-fill", 
+					color: [227, 139, 79, 0.6],
+					outline: {
+						color: [255, 255, 255],
+						width: 1
+					}
+				}
+
+			},			
+		]
+	}
+  require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/GraphicsLayer",
+		"esri/Graphic"], function(
+        Map, SceneView, GraphicsLayer, Graphic
+      ) {
+
+        const map = new Map({
+          basemap: "topo-vector",
+          ground: "world-elevation"
+        });
+
+        const view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          camera: {
+            position: [106.808074, 10.8785612, 700],
+            heading: 0,
+            tilt: 0,
+            fov: 120,
+          },
+        });
+		var createGraphic = function (data) {
+			return new Graphic({
+				geometry: data,
+				symbol: data.symbol,
+				attributes: data,
+				popupTemplate: data.popupTemplate
+			});
+		}; 
+        var graphicsLayer = new GraphicsLayer();
+		
+		jsondata.polygons.forEach(function(data){
+			graphicsLayer.add(createGraphic(data));
+		});
+        
+        map.add(graphicsLayer);
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Sketch in 3D | Sample | ArcGIS Maps SDK for JavaScript 4.29</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.29/"></script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            background-color: ghostwhite;
+        }
+    </style>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/SceneView",
+            "esri/views/3d/environment/SunLighting",
+            "esri/widgets/Sketch/SketchViewModel",
+            "esri/widgets/Sketch",
+            "esri/geometry/Extent",
+            "esri/layers/support/ImageElement",
+            "esri/layers/support/ExtentAndRotationGeoreference",
+            "esri/layers/MediaLayer",
+            "esri/layers/GraphicsLayer",
+            "esri/layers/ElevationLayer",
+            "esri/symbols/PolygonSymbol3D",
+            "esri/symbols/ExtrudeSymbol3DLayer",
+            "esri/symbols/edges/SolidEdges3D",
+            "esri/symbols/LineSymbol3D",
+            "esri/symbols/PathSymbol3DLayer",
+            "esri/symbols/PointSymbol3D",
+            "esri/symbols/ObjectSymbol3DLayer",
+            "esri/geometry/Polygon",
+            "esri/geometry/Polyline",
+            "esri/geometry/Point",
+            "esri/Graphic"
+        ], (
+            Map,
+            SceneView,
+            SunLighting,
+            SketchViewModel,
+            Sketch,
+            Extent,
+            ImageElement,
+            ExtentAndRotationGeoreference,
+            MediaLayer,
+            GraphicsLayer,
+            ElevationLayer,
+            PolygonSymbol3D,
+            ExtrudeSymbol3DLayer,
+            SolidEdges3D,
+            LineSymbol3D,
+            PathSymbol3DLayer,
+            PointSymbol3D,
+            ObjectSymbol3DLayer,
+            Polygon,
+            Polyline,
+            Point,
+            Graphic
+        ) => {
+
+            /**********************************************
+             * Graphics layer to sketch on
+             *********************************************/
+                // The layer where the graphics are sketched
+            const sketchLayer = new GraphicsLayer({
+                    elevationInfo: {
+                        mode: "absolute-height"
+                    },
+                    title: "Sketched geometries"
+                });
+
+            const map = new Map({
+                basemap: "topo-vector",
+                ground: "world-elevation",
+                layers: [sketchLayer] //end layers
+            });
+
+            const view = new SceneView({
+                container: "viewDiv",
+                map: map,
+                camera: {
+                    position: [106.80663276134386,10.878274674237344, 100],
+                    heading: 0,
+                    tilt: 40
+                }
+            });
+            /**********************************************
+             * Symbologies
+             *********************************************/
+            // Polygon symbol used for sketching the extruded building footprints
+            function generateBuildingRings(z) {
+                return [[
+                    [106.80663276134386,10.878274674237344,z],
+                    [106.80689011646328,10.87868281192629,  z],
+                    [106.80676539374204,10.878759856618666,  z],
+                    [106.80650924278295, 10.878353560867192,  z],
+                    [106.80663276134386,10.878274674237344, z]
+                ]];
+            }
+            function generateBancolRings(z) {
+                return [
+                    [
+                        [106.80663276134386,10.878274674237344,z],
+                        [106.80664147852298,10.878269406216129, z],
+                        [106.80666226564244,10.878306282362727, z],
+                        [106.80665623067227,10.878311550383307, z],
+
+                        [106.80668527393519,10.878356472226125, z],
+                        [106.80669399111473,10.878353838216254,   z],
+                        [106.8067107549215,10.878380836816396,  z],
+                        [106.8067013671897,10.878387421840447, z],
+
+                        //Ban công phòng tự học
+                        [106.80673335846238,10.878430785700742,  z],
+                        [106.8067467695078,10.878427493189227,  z],
+                        [106.80676822718047,10.878455808787178,  z],
+                        [106.80677493270319,10.878453174778171,  z],
+                        [106.80678968485314,10.878476880858335,  z],
+                        [106.80678230877817,10.878480173369317,  z],
+                        [106.80679840203267,10.878505854953737,  z],
+                        [106.80678700264406,10.87851639098773,  z],
+                        
+
+                        [106.80681918915306,10.878569729654117,   z],
+                        [106.80682924743712,10.878564461638105,   z],
+                        [106.8068460112439,10.878592777223053,   z],
+                        [106.80683595295984,10.878598045238569,   z],
+                        
+                        
+                        [106.80687216278247,10.878652042392162,    z],
+                        [106.806880879962,10.878648749883075,    z],
+                        [106.8068969732165,10.878674431452977,    z],
+                        [106.80688892658925,10.878682333474035,    z],
+
+
+
+
+                        [106.80689011646328,10.87868281192629,  z],
+                        
+                        
+                        //Mặt sau
+                        [106.80676539374204,10.878759856618666,  z],
+                        [106.8067574573683,10.878763968763678,   z],
+                        [106.80673935245699,10.878737628699877,   z],
+                        [106.80674739908423,10.87873104368355,   z],
+
+
+                        [106.8067111892616,10.878675729540761,     z],
+                        [106.80670247208208,10.87867968055129,     z],
+                        [106.80668436717076,10.878652681978222,     z],
+                        [106.80669375490257,10.878646755461862,     z],
+                        
+
+
+                        [106.8065817726753,10.878470935419646,      z],
+                        [106.80657506715258,10.878473569428486,      z],
+                        [106.806556291689,10.878447229339011,      z],
+                        [106.80656567942081,10.878441961320837,      z],
+                        
+
+
+                        [106.80652946959816,10.878384671617194,       z],
+                        [106.80652008186638,10.87838730562681,       z],
+                        [106.80650331805961,10.878362282534624,       z],
+                        
+
+
+                        [106.80650924278295, 10.878353560867192,  z],
+                        [106.80663276134386,10.878274674237344, z]
+
+                        
+                    ]
+                ]
+            }
+            
+            
+
+            const firstFloorZ = generateBuildingRings(25);
+            const firstFloorBancolZ = generateBancolRings(30);
+            const secondFloorBancolZ = generateBancolRings(38);
+            const thirdFloorBancolZ = generateBancolRings(46);
+            const fourthFloorBancolZ = generateBancolRings(54);
+            const fifthFloorBancolZ = generateBancolRings(62);
+            
+
+
+            const buildingSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 40, 
+                        material: {
+                            color: [245, 222, 108, 0.9]
+                        }
+                    })
+                ]
+            });
+
+            const bancolSymbology = new PolygonSymbol3D({
+                symbolLayers: [
+                    new ExtrudeSymbol3DLayer({
+                        size: 3,
+                        material: {
+                            color: [96, 178, 224, 0.9]
+                        }
+                    })
+                ]
+            });
+            
+            
+            
+
+            function addBuildings(allRings) {
+                allRings.forEach((ring) => {
+                    const building = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: buildingSymbology
+                    });
+                    sketchLayer.add(building);
+                });
+            }
+
+            function addBancols(allRings) {
+                allRings.forEach((ring) => {
+                    const bancol = new Graphic({
+                        geometry: new Polygon({
+                            rings: ring
+                        }),
+                        symbol: bancolSymbology
+                    });
+                    sketchLayer.add(bancol);
+                });
+            }
+            
+            
+
+            
+            addBuildings(firstFloorZ);
+            addBancols(firstFloorBancolZ);
+            addBancols(secondFloorBancolZ);
+            addBancols(thirdFloorBancolZ);
+            addBancols(fourthFloorBancolZ);
+            addBancols(fifthFloorBancolZ);
+
+            
+        });
+
+    </script>
+</head>
+
+<body>
+<div id="viewDiv"></div>
+</body>
+</html>
